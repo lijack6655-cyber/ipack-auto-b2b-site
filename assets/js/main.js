@@ -94,11 +94,20 @@ updateQuoteCount();
 
 function mailToFromForm(form, subjectPrefix='Website Inquiry') {
   const fd = new FormData(form);
-  const lines = [];
-  for(const [k,v] of fd.entries()) if(String(v).trim()) lines.push(`${k}: ${v}`);
-  const subject = encodeURIComponent(subjectPrefix + ' - ' + (fd.get('company') || fd.get('name') || 'Buyer'));
-  const body = encodeURIComponent(lines.join('\n'));
-  window.location.href = `mailto:lynda.yang@ipackauto.com?subject=${subject}&body=${body}`;
+  fd.append('_subject', subjectPrefix + ' - ' + (fd.get('company') || fd.get('name') || 'Buyer'));
+  fetch('https://formspree.io/f/xnjybvyy', {
+    method: 'POST',
+    body: fd,
+    headers: { 'Accept': 'application/json' }
+  }).then(res => {
+    if(res.ok) {
+      alert('Your inquiry has been sent! We will reply within 1 hour.');
+    } else {
+      alert('Send failed. Please contact us via WhatsApp.');
+    }
+  }).catch(() => {
+    alert('Network error. Please contact us via WhatsApp.');
+  });
 }
 
 const vehicleForm = document.getElementById('vehicle-form');
