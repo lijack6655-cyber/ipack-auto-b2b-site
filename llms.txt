@@ -1,31 +1,77 @@
 # I-Pack Auto Parts
 
-I-Pack Auto Parts is a B2B supplier website for aftermarket auto lights and body parts, focused on Toyota and Japanese vehicles.
+Guangzhou I-Pack Auto Parts Co., Limited is a premier B2B manufacturer and wholesale exporter of aftermarket auto lights and body parts, specializing in Toyota and other major Japanese/Asian vehicles. This site operates on an inquiry-only basis (no online checkout) to match precise OE fitment and provide bulk pricing.
 
-## Main products
-- Aftermarket headlights
-- Tail lights / rear lamps
-- Fog lights
-- Mirror covers
-- Bumper parts
-- Grilles and body parts
-- Wheel covers
+## Contact Information
+- **Sales Director**: Lynda Yang
+- **Email**: lynda.yang@ipackauto.com
+- **WhatsApp**: +86 18620780862 (Direct link: https://wa.me/8618620780862)
+- **HQ Location**: Guangzhou, Guangdong Province, China
 
-## Best buyer fit
-- Auto parts importers
-- Wholesalers
-- Repair market suppliers
-- Local distributors
-- Marketplace sellers
+## Complete Product Categories
+- **Aftermarket Headlights**: Halogen, Xenon, and premium LED headlamps.
+- **Tail Lights / Rear Lamps**: Outer/inner brake lights, amber and smoke housing.
+- **Fog Lights & Corner Lights**: High-durability bumper fog lamps.
+- **Mirror Covers**: Paint-to-match and chrome mirror caps.
+- **Bumper Parts & Grilles**: Radiator grilles, bumper brackets, and trims.
+- **Japanese Auto Body Parts**: General replacement body panels and fittings.
+- **Wheel Covers / Hubcaps**: Standard 15-inch, 16-inch, and custom chrome wheel covers.
 
-## Important pages
-- /products.html
-- /oe-number-search.html
-- /vehicle-search.html
-- /quote-list.html
-- /categories/aftermarket-headlights-supplier.html
-- /vehicles/toyota-prius-headlights.html
-- /blog/why-oe-number-matters-for-auto-light-replacement.html
+## Supported Brands and Vehicles
+We supply replacement body parts and lamps for the following vehicles, categorized by manufacturer:
 
-## RFQ instructions
-Buyers should provide vehicle make, model, year, OE number, side position, quantity, destination country and product photo when available.
+### Toyota
+- **Prius** (ZVW30, Prius C, Aqua) - Headlights, Tail Lights, Fog Lights, Mirror Covers, Wheel Covers.
+- **Corolla** (AE110, Axio) - Headlights, Tail Lights, Corner Lights, A/C center vents.
+- **Fielder** - Headlights, Tail Lights, Body panels.
+- **Hilux** - Headlights, Tail Lights, Fog Lights.
+- **Hiace** - Tail Lights, 15-inch Wheel Covers.
+- **Aqua / Axio** - Headlamps and rear brake lights.
+- **Fortuner** - Tail Lights and body trims.
+- **Noah & Voxy** - Headlights and mirror covers.
+- **Rav4** (1998-2000, etc.) - Headlights, Tail Lights, Corner Lights.
+
+### Honda
+- **Civic** - High-illumination Headlights, Mirror Covers.
+- **CR-V / CRV** - Durable aftermarket Headlights.
+- **Fit / Jazz** - Headlights with LHD/RHD options.
+
+### Suzuki
+- **Swift** - Headlights, Tail Lights, Corner Lights, Mirror Covers.
+
+### Nissan
+- **Sunny** - Dimension-matched Headlights.
+- **Navara / Frontier** - Heavy-duty moisture-proof Headlights.
+
+### Mitsubishi
+- **Pajero / Montero** - SUV replacement Headlights.
+- **Lancer** - Headlights with strict beam alignment.
+
+### Hyundai
+- **Starex / H1 / H-1** - Rear Brake Tail Lights, Tail Lamps.
+
+## Target Audience (Best Buyer Fit)
+- **Auto Parts Importers**: Businesses sourcing container-load aftermarket parts.
+- **Wholesalers & Distributors**: Stockists needing consistent supply of repeat-purchase OE numbers.
+- **Auto Repair Market Suppliers**: Regional networks seeking cost-effective replacement lights.
+- **E-commerce & Marketplace Sellers**: Wholesale buyers looking for LHD/RHD variants.
+
+## Important Pages
+- `/products.html` - Complete 70-product e-catalog.
+- `/oe-number-search.html` - Exact OE matching engine.
+- `/vehicle-search.html` - Model-based vehicle tree.
+- `/quote-list.html` - Dynamic RFQ inquiry cart.
+- `/faq.html` - Comprehensive wholesale trade terms.
+- `/quality-control.html` - Sealing, waterproofing and beam tests.
+- `/packing-process.html` - Export-grade packaging standards.
+- `/export-shipping.html` - Port details and ocean/air logistics.
+- `/oem-odm-service.html` - Custom tooling and private labeling.
+
+## B2B RFQ & Sourcing Instructions
+To prevent fitment errors, we require specific verification parameters before quoting:
+1. **Provide Fitment Details**: Vehicle Make, Model, Year, OE Number(s), and left/right side position.
+2. **Provide VIN**: A 17-digit VIN (Vehicle Identification Number) is highly recommended for 100% confirmation.
+3. **Product Photo**: Providing photos of your original vehicle lamp / part is extremely helpful.
+4. **MOQ Policy**: General wholesale MOQ is 10-20 pieces per model (negotiable for stock items).
+5. **Mixed Container Shipping**: We strongly support mixed orders to help buyers reduce shipping costs.
+6. **Inquiry Process**: Add items to your inquiry list on `/quote-list.html` and submit, or contact us directly on WhatsApp or email. A detailed FOB/CIF quotation is sent within 24 hours. No payment is collected on this site.
