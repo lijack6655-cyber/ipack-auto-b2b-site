@@ -1,5 +1,13 @@
 {
   "cleanUrls": true,
   "buildCommand": null,
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/admin", "destination": "https://ipack-admin.vercel.app/admin" },
+    { "source": "/admin/:path*", "destination": "https://ipack-admin.vercel.app/admin/:path*" },
+    { "source": "/login", "destination": "https://ipack-admin.vercel.app/login" },
+    { "source": "/dashboard", "destination": "https://ipack-admin.vercel.app/dashboard" },
+    { "source": "/api/auth/:path*", "destination": "https://ipack-admin.vercel.app/api/auth/:path*" },
+    { "source": "/_next/:path*", "destination": "https://ipack-admin.vercel.app/_next/:path*" }
+  ]
 }
