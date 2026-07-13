@@ -2,60 +2,53 @@
   "cleanUrls": true,
   "buildCommand": null,
   "outputDirectory": ".",
+  "crons": [],
   "headers": [
     {
-      "source": "/products/:path*",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, s-maxage=86400"
-        }
-      ]
-    },
-    {
-      "source": "/oe/:path*",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, s-maxage=86400"
-        }
-      ]
-    },
-    {
-      "source": "/vehicles/:path*",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, s-maxage=86400"
-        }
-      ]
-    },
-    {
-      "source": "/blog/:path*",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=7200, s-maxage=604800"
-        }
-      ]
-    },
-    {
-      "source": "/assets/:path*",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/products(?:/|$)(.*)",
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=86400"
+      },
+      "continue": true
     },
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=300, s-maxage=3600"
-        }
-      ]
+      "src": "/oe(?:/|$)(.*)",
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=86400"
+      },
+      "continue": true
+    },
+    {
+      "src": "/vehicles(?:/|$)(.*)",
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=86400"
+      },
+      "continue": true
+    },
+    {
+      "src": "/blog(?:/|$)(.*)",
+      "headers": {
+        "cache-control": "public, max-age=7200, s-maxage=604800"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(?!assets).*",
+      "headers": {
+        "cache-control": "public, max-age=300, s-maxage=3600"
+      },
+      "continue": true
     }
   ],
   "rewrites": [
