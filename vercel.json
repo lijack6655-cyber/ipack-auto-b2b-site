@@ -2,12 +2,86 @@
   "cleanUrls": true,
   "buildCommand": null,
   "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/products/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/oe/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/vehicles/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/blog/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=7200, s-maxage=604800"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=3600"
+        }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/admin", "destination": "https://ipack-admin.vercel.app/admin" },
-    { "source": "/admin/:path*", "destination": "https://ipack-admin.vercel.app/admin/:path*" },
-    { "source": "/login", "destination": "https://ipack-admin.vercel.app/login" },
-    { "source": "/dashboard", "destination": "https://ipack-admin.vercel.app/dashboard" },
-    { "source": "/api/auth/:path*", "destination": "https://ipack-admin.vercel.app/api/auth/:path*" },
-    { "source": "/_next/:path*", "destination": "https://ipack-admin.vercel.app/_next/:path*" }
+    {
+      "source": "/admin",
+      "destination": "https://ipack-admin.vercel.app/admin"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://ipack-admin.vercel.app/admin/:path*"
+    },
+    {
+      "source": "/login",
+      "destination": "https://ipack-admin.vercel.app/login"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "https://ipack-admin.vercel.app/dashboard"
+    },
+    {
+      "source": "/api/auth/:path*",
+      "destination": "https://ipack-admin.vercel.app/api/auth/:path*"
+    },
+    {
+      "source": "/_next/:path*",
+      "destination": "https://ipack-admin.vercel.app/_next/:path*"
+    }
   ]
 }
