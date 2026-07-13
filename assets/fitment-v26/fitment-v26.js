@@ -268,7 +268,7 @@ function syncSiteQuoteList(p){
       oe: p.oe || '',
       fitment: [p.fitment, p.position, p.packageType === 'pair' ? 'Pair Kit' : 'Single Side'].filter(Boolean).join(' · '),
       image: p.img || '',
-      url: 'products.html#fitment-center',
+      url: 'products#fitment-center',
       qty: p.qty ? String(p.qty) : ''
     };
     const idx = list.findIndex(x => (x.id || x.url || x.title) === item.id);

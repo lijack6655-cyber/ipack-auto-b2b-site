@@ -70,7 +70,7 @@ function showInquiryToastV25(item) {
     toast.className = 'inquiry-toast-v25';
     document.body.appendChild(toast);
   }
-  toast.innerHTML = `<strong>Added to RFQ</strong><span>${item.title || 'Product'} has been added.</span><a href="${location.pathname.includes('/products/') ? '../quote-list.html' : 'quote-list.html'}">View Inquiry List</a>`;
+  toast.innerHTML = `<strong>Added to RFQ</strong><span>${item.title || 'Product'} has been added.</span><a href="${location.pathname.includes('/products/') ? '../quote-list' : 'quote-list'}">View Inquiry List</a>`;
   toast.classList.add('show');
   clearTimeout(window.__ipackToastTimer);
   window.__ipackToastTimer = setTimeout(() => toast.classList.remove('show'), 3600);
@@ -117,7 +117,7 @@ if(vehicleForm) {
     const fd = new FormData(vehicleForm);
     const q = new URLSearchParams();
     for(const [k,v] of fd.entries()) if(String(v).trim()) q.set(k, v);
-    location.href = 'products.html?' + q.toString() + '#fitment';
+    location.href = 'products?' + q.toString() + '#fitment';
   });
 }
 
@@ -146,7 +146,7 @@ if(oeForm) {
   oeForm.addEventListener('submit', e => {
     e.preventDefault();
     const v = new FormData(oeForm).get('search');
-    location.href = 'products.html?search=' + encodeURIComponent(v || '') + '#fitment';
+    location.href = 'products?search=' + encodeURIComponent(v || '') + '#fitment';
   });
 }
 
@@ -258,7 +258,7 @@ function productCard(p) {
   const secondary = p.hoverImage ? `<img class="secondary" src="${p.hoverImage}" alt="${title} installed view" loading="lazy" decoding="async">` : '';
   const thumbNote = p.hoverImage ? `<span class="thumb-note">Hover to view real vehicle scene</span>` : `<span class="thumb-note">Clean product image</span>`;
   return `<article class="card product-card product-card-v15 ${p.hoverImage ? 'has-hover-scene' : ''}">
-    <a class="product-thumb product-thumb-link-v21" href="products/${p.slug}.html" aria-label="View ${title}">
+    <a class="product-thumb product-thumb-link-v21" href="products/${p.slug}" aria-label="View ${title}">
       <img class="primary" src="${p.image}" alt="${title}" loading="lazy" decoding="async">
       ${secondary}
       ${thumbNote}
@@ -272,8 +272,8 @@ function productCard(p) {
         <span><strong>MOQ:</strong> ${p.moq || 'Contact us'} ${p.price ? '| ' + p.price : '| Wholesale quote'}</span>
       </div>
       <div class="card-actions">
-        <a class="btn btn-small" href="products/${p.slug}.html">View Detail</a>
-        <button class="btn btn-small btn-light" data-add-inquiry data-id="${p.id}" data-title="${safeTitle}" data-category="${p.category || ''}" data-oe="${(p.oeNumbers || []).join(', ')}" data-url="products/${p.slug}.html">Add RFQ</button>
+        <a class="btn btn-small" href="products/${p.slug}">View Detail</a>
+        <button class="btn btn-small btn-light" data-add-inquiry data-id="${p.id}" data-title="${safeTitle}" data-category="${p.category || ''}" data-oe="${(p.oeNumbers || []).join(', ')}" data-url="products/${p.slug}">Add RFQ</button>
       </div>
     </div>
   </article>`;
@@ -298,7 +298,7 @@ async function renderProductListingV15() {
     const summary = document.getElementById('result-summary');
     if(summary) summary.textContent = hasFilter ? `Showing ${items.length} matched product(s)` : `Showing all ${items.length} products by default`;
     const shown = items.slice(0, visibleCount);
-    grid.innerHTML = shown.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No matched products found</h3><p>Send your OE number, vehicle model or product photo. We can help confirm availability manually.</p></div><div class="card-actions"><a class="btn" href="contact.html">Send Requirement</a><a class="btn btn-light" href="oe-number-search.html">Search OE</a></div></div>`;
+    grid.innerHTML = shown.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No matched products found</h3><p>Send your OE number, vehicle model or product photo. We can help confirm availability manually.</p></div><div class="card-actions"><a class="btn" href="contact">Send Requirement</a><a class="btn btn-light" href="oe-number-search">Search OE</a></div></div>`;
     if(loadMoreBtn) loadMoreBtn.style.display = items.length > visibleCount ? 'inline-flex' : 'none';
   };
   if(form) form.addEventListener('submit', e => { e.preventDefault(); visibleCount = 24; render(); });
@@ -321,9 +321,9 @@ async function renderOeSearchCenterV15() {
     const q = input.value.trim();
     let items = q ? data.filter(p => itemMatches(p, {search: q})) : data.filter(p => (p.oeNumbers || []).length).slice(0, 12);
     if(status) status.innerHTML = q ? `<strong>Search result for:</strong> ${q} · ${items.length} matched product(s)` : `<strong>Popular OE-ready products</strong> · Enter an OE number or keyword for exact matching.`;
-    box.innerHTML = items.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No OE match found</h3><p>Send the OE number, vehicle model and product photo. We will check manually and reply with availability.</p></div><div class="card-actions"><a class="btn" href="contact.html">Send OE Number</a><a class="btn btn-light" href="products.html">Browse Products</a></div></div>`;
+    box.innerHTML = items.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No OE match found</h3><p>Send the OE number, vehicle model and product photo. We will check manually and reply with availability.</p></div><div class="card-actions"><a class="btn" href="contact">Send OE Number</a><a class="btn btn-light" href="products">Browse Products</a></div></div>`;
   };
-  form.addEventListener('submit', e => { e.preventDefault(); const q = input.value.trim(); history.replaceState(null, '', q ? `oe-number-search.html?search=${encodeURIComponent(q)}` : 'oe-number-search.html'); render(); });
+  form.addEventListener('submit', e => { e.preventDefault(); const q = input.value.trim(); history.replaceState(null, '', q ? `oe-number-search?search=${encodeURIComponent(q)}` : 'oe-number-search'); render(); });
   render();
 }
 renderOeSearchCenterV15();
@@ -341,7 +341,7 @@ async function renderVehicleSearchCenterV15() {
     const hasFilter = Object.values(criteria).some(v => String(v||'').trim());
     const items = hasFilter ? data.filter(p => itemMatches(p, criteria)) : data.slice(0, 12);
     if(status) status.innerHTML = hasFilter ? `<strong>Vehicle search result:</strong> ${items.length} matched product(s)` : `<strong>Featured catalog products</strong> · Select year, make, model or category to narrow results.`;
-    box.innerHTML = items.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No vehicle match found</h3><p>Send vehicle model, OE number and product photo so we can check manually.</p></div><div class="card-actions"><a class="btn" href="contact.html">Send Vehicle Info</a><a class="btn btn-light" href="oe-number-search.html">Search OE</a></div></div>`;
+    box.innerHTML = items.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No vehicle match found</h3><p>Send vehicle model, OE number and product photo so we can check manually.</p></div><div class="card-actions"><a class="btn" href="contact">Send Vehicle Info</a><a class="btn btn-light" href="oe-number-search">Search OE</a></div></div>`;
   };
   form.addEventListener('submit', e => { e.preventDefault(); render(); });
   render();
@@ -529,7 +529,7 @@ initDetailGalleryHoverV25();
     productTitle.textContent = `${make} ${model} ${lampLabels[lamp] || 'Auto Light'} ${side === 'Set' ? 'Left + Right Set' : side}`;
     productMeta.textContent = `${side} · OE/photo confirmation · MOQ ${side==='Set' ? '5 SETS' : '10 PCS'}`;
     const params = new URLSearchParams({year, make, model, category: lamp});
-    viewProducts.href = 'products.html?' + params.toString() + '#fitment';
+    viewProducts.href = 'products?' + params.toString() + '#fitment';
   }
   makeSel.addEventListener('change',()=>{fillModels(); update();});
   [yearSel,modelSel,lampSel].forEach(el=>el.addEventListener('change',update));
