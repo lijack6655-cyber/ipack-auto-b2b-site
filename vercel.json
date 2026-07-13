@@ -12,43 +12,51 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
-    }
-  ],
-  "routes": [
-    {
-      "src": "/products(?:/|$)(.*)",
-      "headers": {
-        "cache-control": "public, max-age=3600, s-maxage=86400"
-      },
-      "continue": true
     },
     {
-      "src": "/oe(?:/|$)(.*)",
-      "headers": {
-        "cache-control": "public, max-age=3600, s-maxage=86400"
-      },
-      "continue": true
+      "source": "/products(/?|.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
     },
     {
-      "src": "/vehicles(?:/|$)(.*)",
-      "headers": {
-        "cache-control": "public, max-age=3600, s-maxage=86400"
-      },
-      "continue": true
+      "source": "/oe-number-search(/?|.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
     },
     {
-      "src": "/blog(?:/|$)(.*)",
-      "headers": {
-        "cache-control": "public, max-age=7200, s-maxage=604800"
-      },
-      "continue": true
+      "source": "/vehicle-search(/?|.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400"
+        }
+      ]
     },
     {
-      "src": "/(?!assets).*",
-      "headers": {
-        "cache-control": "public, max-age=300, s-maxage=3600"
-      },
-      "continue": true
+      "source": "/blog.*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=7200, s-maxage=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=3600"
+        }
+      ]
     }
   ],
   "rewrites": [
