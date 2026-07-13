@@ -6,5 +6,17 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+/products.html
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/oe-number-search.html
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/vehicle-search.html
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/blog/*.html
+  Cache-Control: public, max-age=7200, s-maxage=604800
+
 /*.html
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: public, max-age=300, s-maxage=3600
