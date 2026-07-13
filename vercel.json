@@ -5,16 +5,7 @@
   "crons": [],
   "headers": [
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(?!assets/).*",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -91,6 +82,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=7200, s-maxage=604800"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
