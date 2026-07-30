@@ -57,15 +57,15 @@ We supply replacement body parts and lamps for the following vehicles, categoriz
 - **E-commerce & Marketplace Sellers**: Wholesale buyers looking for LHD/RHD variants.
 
 ## Important Pages
-- `/products.html` - Complete 70-product e-catalog.
-- `/oe-number-search.html` - Exact OE matching engine.
-- `/vehicle-search.html` - Model-based vehicle tree.
-- `/quote-list.html` - Dynamic RFQ inquiry cart.
-- `/faq.html` - Comprehensive wholesale trade terms.
-- `/quality-control.html` - Sealing, waterproofing and beam tests.
-- `/packing-process.html` - Export-grade packaging standards.
-- `/export-shipping.html` - Port details and ocean/air logistics.
-- `/oem-odm-service.html` - Custom tooling and private labeling.
+- `/products` - Complete 68-product e-catalog.
+- `/oe-number-search` - Exact OE matching engine.
+- `/vehicle-search` - Model-based vehicle tree.
+- `/quote-list` - Dynamic RFQ inquiry cart.
+- `/faq` - Comprehensive wholesale trade terms.
+- `/quality-control` - Sealing, waterproofing and beam tests.
+- `/packing-process` - Export-grade packaging standards.
+- `/export-shipping` - Port details and ocean/air logistics.
+- `/oem-odm-service` - Custom tooling and private labeling.
 
 ## B2B RFQ & Sourcing Instructions
 To prevent fitment errors, we require specific verification parameters before quoting:
@@ -74,4 +74,4 @@ To prevent fitment errors, we require specific verification parameters before qu
 3. **Product Photo**: Providing photos of your original vehicle lamp / part is extremely helpful.
 4. **MOQ Policy**: General wholesale MOQ is 10-20 pieces per model (negotiable for stock items).
 5. **Mixed Container Shipping**: We strongly support mixed orders to help buyers reduce shipping costs.
-6. **Inquiry Process**: Add items to your inquiry list on `/quote-list.html` and submit, or contact us directly on WhatsApp or email. A detailed FOB/CIF quotation is sent within 24 hours. No payment is collected on this site.
+6. **Inquiry Process**: Add items to your inquiry list on `/quote-list` and submit, or contact us directly on WhatsApp or email. A detailed FOB/CIF quotation is sent within 24 hours. No payment is collected on this site.

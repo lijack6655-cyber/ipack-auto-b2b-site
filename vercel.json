@@ -2,6 +2,18 @@
   "cleanUrls": true,
   "buildCommand": null,
   "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/products/ist-81105-52520-headlights-1601187126679-2",
+      "destination": "/products/ist-81105-52520-headlights-1601187126679",
+      "permanent": true
+    },
+    {
+      "source": "/products/ist-tail-lights-1601187274420-2",
+      "destination": "/products/ist-tail-lights-1601187274420",
+      "permanent": true
+    }
+  ],
   "crons": [],
   "headers": [
     {
