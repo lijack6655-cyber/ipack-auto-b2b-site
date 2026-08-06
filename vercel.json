@@ -15,18 +15,6 @@
     }
   ],
   "crons": [],
-  "redirects": [
-    {
-      "source": "/products/ist-81105-52520-headlights-1601187126679-2",
-      "destination": "/products/ist-81105-52520-headlights-1601187126679",
-      "permanent": true
-    },
-    {
-      "source": "/products/ist-tail-lights-1601187274420-2",
-      "destination": "/products/ist-tail-lights-1601187274420",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -137,8 +125,12 @@
       "destination": "https://ipack-admin.vercel.app/dashboard"
     },
     {
-      "source": "/api/auth/:path*",
-      "destination": "https://ipack-admin.vercel.app/api/auth/:path*"
+      "source": "/api/catalog",
+      "destination": "https://ipack-admin.vercel.app/api/catalog"
+    },
+    {
+      "source": "/api/rfq",
+      "destination": "https://ipack-admin.vercel.app/api/rfq"
     },
     {
       "source": "/_next/:path*",
