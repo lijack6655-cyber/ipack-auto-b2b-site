@@ -279,7 +279,19 @@ function productCard(p) {
   </article>`;
 }
 async function loadProductsData() {
-  return await fetch('product-data.json').then(r=>r.json()).then(data => data.sort((a,b)=> (b.featured===true) - (a.featured===true)));
+  try {
+    const response = await fetch('/api/catalog', { headers: { Accept: 'application/json' } });
+    if(!response.ok) throw new Error('Catalog API unavailable');
+    const data = await response.json();
+    if(!Array.isArray(data) || !data.length) throw new Error('Catalog API returned no products');
+    return data.sort((a,b)=> (b.featured===true) - (a.featured===true));
+  } catch(error) {
+    console.warn('Using static catalog fallback:', error.message);
+    return await fetch('/product-data.json').then(r => {
+      if(!r.ok) throw new Error('Static catalog unavailable');
+      return r.json();
+    }).then(data => data.sort((a,b)=> (b.featured===true) - (a.featured===true)));
+  }
 }
 async function renderProductListingV15() {
   const grid = document.getElementById('product-listing-grid');
@@ -421,6 +433,51 @@ function initRfqImageZonesV23() {
   });
 }
 initRfqImageZonesV23();
+
+/* Mirror Formspree RFQs into the first-party operations database. */
+function initFirstPartyRfqCapture() {
+  document.querySelectorAll('form[action^="https://formspree.io/"]').forEach(form => {
+    if(!form.querySelector('[name="privacy_consent"]')) {
+      const consent = document.createElement('label');
+      consent.className = 'full form-consent-v26';
+      consent.innerHTML = '<input type="checkbox" name="privacy_consent" value="accepted" required> I agree that I-Pack may use my submitted contact and vehicle information to respond to this inquiry. See the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.';
+      const submit = form.querySelector('[type="submit"]');
+      if(submit) form.insertBefore(consent, submit);
+      else form.appendChild(consent);
+    }
+    if(!form.querySelector('[name="website"]')) {
+      const honeypot = document.createElement('input');
+      honeypot.type = 'text';
+      honeypot.name = 'website';
+      honeypot.tabIndex = -1;
+      honeypot.autocomplete = 'off';
+      honeypot.setAttribute('aria-hidden', 'true');
+      honeypot.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+      form.appendChild(honeypot);
+    }
+    form.addEventListener('submit', () => {
+      const fd = new FormData(form);
+      const payload = {};
+      for(const [key, value] of fd.entries()) {
+        if(value instanceof File) continue;
+        payload[key] = String(value);
+      }
+      payload.privacyConsent = fd.get('privacy_consent') === 'accepted';
+      payload.sourcePage = location.href;
+      const params = new URLSearchParams(location.search);
+      ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'].forEach(key => {
+        if(params.get(key)) payload[key] = params.get(key);
+      });
+      fetch('/api/rfq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {});
+    });
+  });
+}
+initFirstPartyRfqCapture();
 
 
 
