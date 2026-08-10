@@ -125,6 +125,10 @@
       "destination": "https://ipack-admin.vercel.app/dashboard"
     },
     {
+      "source": "/set-password",
+      "destination": "https://ipack-admin.vercel.app/set-password"
+    },
+    {
       "source": "/api/catalog",
       "destination": "https://ipack-admin.vercel.app/api/catalog"
     },
