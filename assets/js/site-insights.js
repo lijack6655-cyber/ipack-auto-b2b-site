@@ -3,7 +3,7 @@
 
   // GA4 Measurement IDs are public identifiers, not secrets. Keep the real ID
   // in this single location once the Google Analytics web stream is confirmed.
-  const MEASUREMENT_ID = '';
+  const MEASUREMENT_ID = 'G-4FC1Y4G5ZN';
   const CONSENT_KEY = 'ipack_analytics_consent_v1';
   const isConfigured = /^G-[A-Z0-9]+$/i.test(MEASUREMENT_ID);
   document.documentElement.dataset.ipackAnalytics = isConfigured ? 'configured' : 'ready';
