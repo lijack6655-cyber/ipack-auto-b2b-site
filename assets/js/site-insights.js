@@ -8,11 +8,63 @@
   const isConfigured = /^G-[A-Z0-9]+$/i.test(MEASUREMENT_ID);
   document.documentElement.dataset.ipackAnalytics = isConfigured ? 'configured' : 'ready';
 
+  // IANA timezones covering the EU/EEA plus the UK and Switzerland. GDPR/UK-GDPR
+  // and the ePrivacy Directive require prior opt-in there, so those visitors keep
+  // seeing the banner. Everywhere else analytics is enabled by default.
+  const CONSENT_REQUIRED_ZONES = [
+    'Europe/Amsterdam', 'Europe/Andorra', 'Europe/Athens', 'Europe/Belfast',
+    'Europe/Belgrade', 'Europe/Berlin', 'Europe/Bratislava', 'Europe/Brussels',
+    'Europe/Bucharest', 'Europe/Budapest', 'Europe/Busingen', 'Europe/Copenhagen',
+    'Europe/Dublin', 'Europe/Gibraltar', 'Europe/Guernsey', 'Europe/Helsinki',
+    'Europe/Isle_of_Man', 'Europe/Jersey', 'Europe/Lisbon',
+    'Europe/Ljubljana', 'Europe/London', 'Europe/Luxembourg', 'Europe/Madrid',
+    'Europe/Malta', 'Europe/Mariehamn', 'Europe/Monaco', 'Europe/Oslo',
+    'Europe/Paris', 'Europe/Podgorica', 'Europe/Prague', 'Europe/Reykjavik',
+    'Europe/Riga', 'Europe/Rome', 'Europe/San_Marino', 'Europe/Sarajevo',
+    'Europe/Skopje', 'Europe/Sofia', 'Europe/Stockholm', 'Europe/Tallinn',
+    'Europe/Tirane', 'Europe/Vaduz', 'Europe/Vatican', 'Europe/Vienna',
+    'Europe/Vilnius', 'Europe/Warsaw', 'Europe/Zagreb', 'Europe/Zurich',
+    'Atlantic/Azores', 'Atlantic/Canary', 'Atlantic/Faroe', 'Atlantic/Madeira',
+    'Atlantic/Reykjavik', 'Arctic/Longyearbyen'
+  ];
+
+  // Returns true when we must ask before loading analytics. Any detection
+  // failure returns true so the privacy-safe path is the fallback.
+  function requiresPriorConsent() {
+    try {
+      if (typeof Intl === 'undefined' || !Intl.DateTimeFormat) return true;
+      const resolved = Intl.DateTimeFormat().resolvedOptions();
+      const zone = resolved && resolved.timeZone;
+      if (!zone) return true;
+      if (CONSENT_REQUIRED_ZONES.indexOf(zone) !== -1) return true;
+      // Unlisted Europe/* zones are treated as consent-required as well.
+      return zone.indexOf('Europe/') === 0;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  const needsPriorConsent = requiresPriorConsent();
+
+  function storedChoice() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (_) { return null; }
+  }
+
+  // A previously stored choice always wins over the regional default, so a
+  // visitor who opted out never emits a 'granted' signal on later page loads.
+  const savedChoice = storedChoice();
+  const defaultAnalyticsState = savedChoice === 'granted'
+    ? 'granted'
+    : savedChoice === 'denied'
+      ? 'denied'
+      : (needsPriorConsent ? 'denied' : 'granted');
+  document.documentElement.dataset.ipackConsentMode = needsPriorConsent ? 'opt-in' : 'default-on';
+
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
 
   window.gtag('consent', 'default', {
-    analytics_storage: 'denied',
+    analytics_storage: defaultAnalyticsState,
     ad_storage: 'denied',
     ad_user_data: 'denied',
     ad_personalization: 'denied',
@@ -59,14 +111,42 @@
       ad_personalization: 'denied'
     });
     try { localStorage.setItem(CONSENT_KEY, value); } catch (_) {}
-    if (granted) loadGa4();
+    if (granted) {
+      loadGa4();
+      return;
+    }
+    // Opting out must also stop the already-initialised tracker and clear the
+    // _ga* cookies GA4 wrote before the visitor changed their mind.
+    try {
+      window['ga-disable-' + MEASUREMENT_ID] = true;
+      const host = location.hostname;
+      const domains = [host, '.' + host];
+      const bare = host.replace(/^www\./, '');
+      if (bare !== host) domains.push(bare, '.' + bare);
+      document.cookie.split(';').forEach(function (entry) {
+        const name = entry.split('=')[0].trim();
+        if (!/^_ga/.test(name)) return;
+        domains.forEach(function (domain) {
+          document.cookie = name + '=; path=/; domain=' + domain + '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        });
+        document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      });
+    } catch (_) {}
+  }
+
+  // Analytics is active when the visitor opted in, or when they are outside the
+  // consent-required region and have not explicitly opted out.
+  function analyticsAllowed() {
+    if (!isConfigured) return false;
+    let stored = null;
+    try { stored = localStorage.getItem(CONSENT_KEY); } catch (_) {}
+    if (stored === 'granted') return true;
+    if (stored === 'denied') return false;
+    return !needsPriorConsent;
   }
 
   function track(name, params) {
-    if (!isConfigured) return;
-    let consent = null;
-    try { consent = localStorage.getItem(CONSENT_KEY); } catch (_) {}
-    if (consent !== 'granted') return;
+    if (!analyticsAllowed()) return;
     window.gtag('event', name, Object.assign({
       page_type: pageType(),
       page_path: safePagePath()
@@ -82,6 +162,19 @@
       return;
     }
     if (choice === 'denied') return;
+
+    // Outside the consent-required region: start collecting immediately and let
+    // the visitor opt out through the privacy policy instead of a blocking banner.
+    if (!needsPriorConsent) {
+      window.gtag('consent', 'update', {
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
+      loadGa4();
+      return;
+    }
 
     const style = document.createElement('style');
     style.textContent = '.ipack-consent{position:fixed;left:18px;right:18px;bottom:18px;z-index:1000;max-width:760px;margin:auto;padding:18px;background:#fff;color:#111827;border:1px solid #dbe3ee;border-radius:16px;box-shadow:0 18px 50px rgba(15,23,42,.24);font:14px/1.5 Arial,sans-serif}.ipack-consent p{margin:0 0 12px}.ipack-consent-actions{display:flex;gap:10px;flex-wrap:wrap}.ipack-consent button{border:1px solid #d3dbe7;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer}.ipack-consent .accept{background:#d9271c;color:#fff;border-color:#d9271c}.ipack-consent a{color:#b91c1c}@media(max-width:600px){.ipack-consent{left:10px;right:10px;bottom:10px}}';
@@ -139,12 +232,47 @@
   window.ipackAnalytics = Object.freeze({
     configured: isConfigured,
     track: track,
-    updateConsent: updateConsent
+    updateConsent: updateConsent,
+    requiresPriorConsent: needsPriorConsent,
+    isActive: analyticsAllowed,
+    // Opt-out entry point for visitors in default-on regions, wired to the
+    // control rendered on the privacy policy page.
+    optOut: function () { updateConsent('denied'); },
+    optIn: function () { updateConsent('granted'); }
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', consentBanner, { once: true });
-  } else {
+  // Wires the opt-out / opt-in control rendered on the privacy policy page.
+  function preferenceControl() {
+    const root = document.querySelector('[data-analytics-choice]');
+    if (!root) return;
+    const state = root.querySelector('[data-analytics-state]');
+    const offBtn = root.querySelector('[data-analytics-optout]');
+    const onBtn = root.querySelector('[data-analytics-optin]');
+
+    function render() {
+      const active = analyticsAllowed();
+      if (state) {
+        state.textContent = active
+          ? 'Analytics is currently ON for this browser.'
+          : 'Analytics is currently OFF for this browser.';
+      }
+      if (offBtn) offBtn.hidden = !active;
+      if (onBtn) onBtn.hidden = active;
+    }
+
+    if (offBtn) offBtn.addEventListener('click', function () { updateConsent('denied'); render(); });
+    if (onBtn) onBtn.addEventListener('click', function () { updateConsent('granted'); render(); });
+    render();
+  }
+
+  function init() {
     consentBanner();
+    preferenceControl();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
   }
 })();
