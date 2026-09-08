@@ -250,53 +250,51 @@ function itemMatches(p, criteria={}) {
   }
   return true;
 }
-function productCard(p) {
-  const title = cleanDisplayTitle(p);
-  const oe = (p.oeNumbers && p.oeNumbers.length) ? 'OE: ' + p.oeNumbers.join(', ') : 'OE matching available';
-  const fitment = `${p.make || ''} ${p.model || ''} ${p.years || ''}`.replace(/\s+/g,' ').trim() || 'Vehicle matching available';
-  const safeTitle = title.replaceAll('"','&quot;');
-  const secondary = p.hoverImage ? `<img class="secondary" src="${p.hoverImage}" alt="${title} installed view" loading="lazy" decoding="async">` : '';
-  const thumbNote = p.hoverImage ? `<span class="thumb-note">Hover to view real vehicle scene</span>` : `<span class="thumb-note">Clean product image</span>`;
-  return `<article class="card product-card product-card-v15 ${p.hoverImage ? 'has-hover-scene' : ''}">
-    <a class="product-thumb product-thumb-link-v21" href="/products/${p.slug}" aria-label="View ${title}">
-      <img class="primary" src="${p.image}" alt="${title}" loading="lazy" decoding="async">
-      ${secondary}
-      ${thumbNote}
-    </a>
-    <div class="card-pad">
-      <div class="product-card-topline"><span class="badge">${p.category || 'Auto Parts'}</span><span class="mini-oe">${(p.oeNumbers||[])[0] || 'B2B RFQ'}</span></div>
-      <h3>${title}</h3>
-      <div class="meta">
-        <span><strong>Fitment:</strong> ${fitment}</span>
-        <span><strong>${oe}</strong></span>
-        <span><strong>MOQ:</strong> ${p.moq || 'Contact us'} ${p.price ? '| ' + p.price : '| Wholesale quote'}</span>
-      </div>
-      <div class="card-actions">
-        <a class="btn btn-small" href="/products/${p.slug}">View Detail</a>
-        <button class="btn btn-small btn-light" data-add-inquiry data-id="${p.id}" data-title="${safeTitle}" data-category="${p.category || ''}" data-oe="${(p.oeNumbers || []).join(', ')}" data-url="/products/${p.slug}">Add RFQ</button>
-      </div>
-    </div>
-  </article>`;
+function catalogEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-async function loadProductsData() {
-  try {
-    const response = await fetch('/api/catalog', { headers: { Accept: 'application/json' } });
-    if(!response.ok) throw new Error('Catalog API unavailable');
-    const data = await response.json();
-    if(!Array.isArray(data) || !data.length) throw new Error('Catalog API returned no products');
-    return data.sort((a,b)=> (b.featured===true) - (a.featured===true));
-  } catch(error) {
-    console.warn('Using static catalog fallback:', error.message);
-    return await fetch('/product-data.json').then(r => {
-      if(!r.ok) throw new Error('Static catalog unavailable');
-      return r.json();
-    }).then(data => data.sort((a,b)=> (b.featured===true) - (a.featured===true)));
+function catalogImage(value) {
+  const path = String(value || '');
+  return /^(?:\/?assets\/images\/[a-zA-Z0-9_./-]+\.(?:webp|png|jpe?g)|\/api\/product-media\/[0-9a-f-]{36})$/.test(path) && !path.includes('..') ? '/' + path.replace(/^\//,'') : '/assets/images/headlights.webp';
+}
+function productCard(p) {
+  const h = catalogEscape;
+  const title = p.displayTitle || p.title || 'Auto Parts';
+  const url = '/products/' + encodeURIComponent(p.slug);
+  const fitment = [p.make,p.model,p.years].filter(Boolean).join(' ') || 'Please confirm fitment';
+  const secondary = p.hoverImage ? `<img class="secondary" src="${h(catalogImage(p.hoverImage))}" alt="${h(title)} — additional view" loading="lazy" decoding="async">` : '';
+  return `<article class="card product-card product-card-v15 ${p.hoverImage ? 'has-hover-scene' : ''}">
+    <a class="product-thumb product-thumb-link-v21" href="${h(url)}" aria-label="View ${h(title)}"><img class="primary" src="${h(catalogImage(p.image))}" alt="${h(title)}" loading="lazy" decoding="async">${secondary}<span class="thumb-note">${p.hoverImage ? 'Hover for another view' : 'Product image'}</span></a>
+    <div class="card-pad"><div class="product-card-topline"><span class="badge">${h(p.category || 'Auto Parts')}</span><span class="mini-oe">${h((p.oeNumbers||[])[0] || 'B2B RFQ')}</span></div><h3>${h(title)}</h3>
+    <div class="meta"><span><strong>Fitment:</strong> ${h(fitment)}</span><span><strong>${h((p.oeNumbers||[]).length ? 'OE: '+p.oeNumbers.join(', ') : 'Please confirm OE number')}</strong></span><span><strong>MOQ:</strong> ${h(p.moq || 'Contact us')} | ${h(p.price || 'Request a quote')}</span></div>
+    <div class="card-actions"><a class="btn btn-small" href="${h(url)}">View Detail</a><button class="btn btn-small btn-light" data-add-inquiry data-id="${h(p.id)}" data-title="${h(title)}" data-category="${h(p.category)}" data-oe="${h((p.oeNumbers||[]).join(', '))}" data-url="${h(url)}">Add RFQ</button></div></div></article>`;
+}
+// ponytail: one catalog request per page; add server pagination when the catalog outgrows a single response.
+let catalogRequest;
+function loadProductsData() {
+  return catalogRequest ||= fetch('/api/catalog', { cache:'no-store', headers:{Accept:'application/json'} })
+    .then(async response => { if(!response.ok) throw new Error('Catalog unavailable'); const data=await response.json(); if(!Array.isArray(data)) throw new Error('Invalid catalog'); return data.sort((a,b)=>Number(b.featured===true)-Number(a.featured===true)); })
+    .catch(() => { for(const id of ['product-listing-grid','oe-search-results','vehicle-search-results']) { const target=document.getElementById(id); if(target) target.innerHTML='<p role="status">The catalog is temporarily unavailable. Please <a href="/contact">contact us</a> or reload this page.</p>'; } return null; });
+}
+async function refreshStaticProductCards() {
+  const cards=[...document.querySelectorAll('article.product-card')];
+  if(!cards.length) return;
+  cards.forEach(card => {card.style.display='none';});
+  const products=await loadProductsData();
+  if(!products) return;
+  for(const card of cards) {
+    const link=card.querySelector('a[href*="products/"]');
+    const slug=link?.getAttribute('href').split('/').pop().replace(/\.html$/,'');
+    const product=products.find(p=>p.slug===slug);
+    if(product) card.outerHTML=productCard(product); else card.remove();
   }
 }
+refreshStaticProductCards();
 async function renderProductListingV15() {
   const grid = document.getElementById('product-listing-grid');
   if(!grid) return;
   const data = await loadProductsData();
+  if(!data) return;
   const params = new URLSearchParams(location.search);
   const form = document.getElementById('catalog-filter');
   const resetBtn = document.getElementById('reset-catalog-filter');
@@ -326,13 +324,14 @@ async function renderOeSearchCenterV15() {
   const form = document.getElementById('oe-center-form');
   if(!box || !form) return;
   const data = await loadProductsData();
+  if(!data) return;
   const input = form.elements.search;
   const params = new URLSearchParams(location.search);
   if(params.get('search')) input.value = params.get('search');
   const render = () => {
     const q = input.value.trim();
     let items = q ? data.filter(p => itemMatches(p, {search: q})) : data.filter(p => (p.oeNumbers || []).length).slice(0, 12);
-    if(status) status.innerHTML = q ? `<strong>Search result for:</strong> ${q} · ${items.length} matched product(s)` : `<strong>Popular OE-ready products</strong> · Enter an OE number or keyword for exact matching.`;
+    if(status) status.innerHTML = q ? `<strong>Search result for:</strong> ${catalogEscape(q)} · ${items.length} matched product(s)` : `<strong>Popular OE-ready products</strong> · Enter an OE number or keyword for exact matching.`;
     box.innerHTML = items.map(productCard).join('') || `<div class="not-found-cta-v15"><div><h3>No OE match found</h3><p>Send the OE number, vehicle model and product photo. We will check manually and reply with availability.</p></div><div class="card-actions"><a class="btn" href="/contact">Send OE Number</a><a class="btn btn-light" href="/products">Browse Products</a></div></div>`;
   };
   form.addEventListener('submit', e => { e.preventDefault(); const q = input.value.trim(); history.replaceState(null, '', q ? `oe-number-search?search=${encodeURIComponent(q)}` : 'oe-number-search'); render(); });
@@ -346,6 +345,7 @@ async function renderVehicleSearchCenterV15() {
   const form = document.getElementById('vehicle-center-form');
   if(!box || !form) return;
   const data = await loadProductsData();
+  if(!data) return;
   const params = new URLSearchParams(location.search);
   ['year','make','model','category'].forEach(k => { if(params.get(k) && form.elements[k]) form.elements[k].value = params.get(k); });
   const render = () => {
