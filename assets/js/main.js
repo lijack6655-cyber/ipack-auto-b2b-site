@@ -455,7 +455,13 @@ function initFirstPartyRfqCapture() {
       honeypot.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
       form.appendChild(honeypot);
     }
-    form.addEventListener('submit', () => {
+    let submitting = false;
+    // Run after form-level fitment validation and hidden-field updates.
+    document.addEventListener('submit', async (event) => {
+      if(event.target !== form || event.defaultPrevented) return;
+      event.preventDefault();
+      if(submitting || !form.checkValidity()) return;
+      submitting = true;
       const fd = new FormData(form);
       const payload = {};
       for(const [key, value] of fd.entries()) {
@@ -468,12 +474,34 @@ function initFirstPartyRfqCapture() {
       ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'].forEach(key => {
         if(params.get(key)) payload[key] = params.get(key);
       });
-      fetch('/api/rfq', {
+      try {
+      const response = await fetch('/api/rfq', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(() => {});
+        keepalive: true,
+        signal: AbortSignal.timeout(8000)
+      });
+      const result = response.ok ? await response.json() : null;
+      if(response.status === 201 && result?.accepted === true && result.reference) {
+        // Only persisted RFQs count; honeypot and duplicate 202 responses do not.
+        const analytics = window.ipackAnalytics;
+        if(analytics?.isActive()) {
+          await new Promise(resolve => {
+            const deadline = setTimeout(resolve, 1000);
+            analytics.track('generate_lead', {
+              form_id: form.id || 'rfq_form', lead_type: 'rfq',
+              event_callback: () => { clearTimeout(deadline); resolve(); },
+              event_timeout: 1000
+            });
+          });
+        }
+      }
+      } catch (_) {
+        // Preserve the existing email/attachment delivery when storage is unavailable.
+      } finally {
+        HTMLFormElement.prototype.submit.call(form);
+      }
     });
   });
 }

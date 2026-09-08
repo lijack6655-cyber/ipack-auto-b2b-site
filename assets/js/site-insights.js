@@ -112,6 +112,7 @@
     });
     try { localStorage.setItem(CONSENT_KEY, value); } catch (_) {}
     if (granted) {
+      window['ga-disable-' + MEASUREMENT_ID] = false;
       loadGa4();
       return;
     }
@@ -221,7 +222,7 @@
     const form = event.target;
     if (!(form instanceof HTMLFormElement) || !form.checkValidity()) return;
     if (/formspree\.io/i.test(form.action)) {
-      track('generate_lead', { form_id: form.id || 'rfq_form', lead_type: 'rfq' });
+      track('rfq_submit_attempt', { form_id: form.id || 'rfq_form', lead_type: 'rfq' });
       return;
     }
     if (['vehicle-form', 'vehicle-center-form', 'catalog-filter', 'oe-form', 'oe-center-form', 'mobileFitmentFormV49'].includes(form.id)) {
