@@ -1,6 +1,28 @@
 
 const menuToggle = document.querySelector('.menu-toggle');
 const mainNav = document.querySelector('.main-nav');
+if(mainNav) {
+  const links = [...mainNav.querySelectorAll('a')];
+  const pathOf = link => new URL(link.href, location.href).pathname.replace(/\/$/, '') || '/';
+  const searchLink = links.find(link => pathOf(link) === '/products');
+  let productLink = links.find(link => pathOf(link) === '/product');
+  if(searchLink) {
+    searchLink.textContent = 'Search';
+    if(!productLink) {
+      productLink = document.createElement('a');
+      productLink.href = '/product';
+      productLink.textContent = 'Product';
+      mainNav.insertBefore(productLink, searchLink);
+    }
+    if(location.pathname.replace(/\/$/, '') === '/product') {
+      searchLink.classList.remove('active');
+      productLink.classList.add('active');
+    }
+  }
+}
+document.querySelectorAll('a').forEach(link => {
+  if(link.textContent.trim() === 'Product Catalog' && new URL(link.href, location.href).pathname.replace(/\/$/, '') === '/products') link.href = '/product';
+});
 if(menuToggle && mainNav) {
   menuToggle.setAttribute('aria-label','Toggle navigation');
   menuToggle.setAttribute('aria-expanded','false');
