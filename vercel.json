@@ -26,6 +26,20 @@
       ]
     },
     {
+      "source": "/news/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "CDN-Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/sitemap-articles.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "CDN-Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
       "source": "/product",
       "headers": [
         {
@@ -212,6 +226,18 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/news/:slug",
+      "destination": "https://ipack-admin.vercel.app/api/article-page/:slug"
+    },
+    {
+      "source": "/api/articles",
+      "destination": "https://ipack-admin.vercel.app/api/articles"
+    },
+    {
+      "source": "/sitemap-articles.xml",
+      "destination": "https://ipack-admin.vercel.app/api/article-sitemap"
+    },
     {
       "source": "/sitemap-catalog.xml",
       "destination": "https://ipack-admin.vercel.app/api/product-sitemap"
