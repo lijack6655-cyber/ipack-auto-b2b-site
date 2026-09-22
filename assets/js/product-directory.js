@@ -1,11 +1,12 @@
 (() => {
   const grid = document.getElementById('product-directory-grid');
   const count = document.getElementById('product-directory-count');
+  const category = document.getElementById('product-directory-category');
   const sort = document.getElementById('product-directory-sort');
   const prev = document.getElementById('product-directory-prev');
   const next = document.getElementById('product-directory-next');
   const pageLabel = document.getElementById('product-directory-page');
-  if(!grid || !count || !sort || !prev || !next || !pageLabel) return;
+  if(!grid || !count || !category || !sort || !prev || !next || !pageLabel) return;
 
   const pageSize = 20;
   let products = [];
@@ -17,7 +18,7 @@
   };
 
   function sortedProducts() {
-    const items = [...products];
+    const items = products.filter(product => !category.value || String(product.category || '') === category.value);
     if(sort.value === 'title') return items.sort((a, b) => String(a.displayTitle || a.title).localeCompare(String(b.displayTitle || b.title)));
     if(sort.value === 'category') return items.sort((a, b) => String(a.category || '').localeCompare(String(b.category || '')) || String(a.title || '').localeCompare(String(b.title || '')));
     return items.sort((a, b) => Number(b.featured === true) - Number(a.featured === true) || Number(a.rank || 9999) - Number(b.rank || 9999));
@@ -50,13 +51,31 @@
     next.disabled = page === pages;
   }
 
+  category.addEventListener('change', () => {
+    page = 1;
+    const url = new URL(location.href);
+    if(category.value) url.searchParams.set('category', category.value);
+    else url.searchParams.delete('category');
+    history.replaceState(null, '', url.pathname + (url.search || '') + (url.hash || ''));
+    render();
+  });
   sort.addEventListener('change', () => { page = 1; render(); });
   prev.addEventListener('click', () => { if(page > 1) { page -= 1; render(); scrollTo({top: document.querySelector('.product-directory-section').offsetTop, behavior: 'smooth'}); } });
-  next.addEventListener('click', () => { if(page * pageSize < products.length) { page += 1; render(); scrollTo({top: document.querySelector('.product-directory-section').offsetTop, behavior: 'smooth'}); } });
+  next.addEventListener('click', () => { if(page < Math.ceil(sortedProducts().length / pageSize)) { page += 1; render(); scrollTo({top: document.querySelector('.product-directory-section').offsetTop, behavior: 'smooth'}); } });
 
-  fetch('/api/catalog', {cache: 'no-store', headers: {Accept: 'application/json'}})
+  const loadProductsData = window.loadProductsData || (() => fetch('/api/catalog', {cache: 'no-store', headers: {Accept: 'application/json'}})
     .then(async response => { if(!response.ok) throw new Error('Catalog unavailable'); return response.json(); })
-    .then(data => { if(!Array.isArray(data)) throw new Error('Invalid catalog'); products = data; render(); })
+    .then(data => { if(!Array.isArray(data)) throw new Error('Invalid catalog'); return data; }));
+  loadProductsData()
+    .then(data => {
+      if(!Array.isArray(data)) throw new Error('Invalid catalog');
+      products = data;
+      const categories = [...new Set(products.map(product => String(product.category || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+      const requested = new URLSearchParams(location.search).get('category') || '';
+      category.innerHTML = '<option value="">All categories</option>' + categories.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+      category.value = categories.includes(requested) ? requested : '';
+      render();
+    })
     .catch(() => {
       grid.setAttribute('aria-busy', 'false');
       count.textContent = 'Products unavailable';
