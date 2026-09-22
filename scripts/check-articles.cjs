@@ -21,6 +21,7 @@ async function check(payload, ok = true) {
   const { container } = await check({ articles: [
     { slug: 'safe-article', title: '<script>alert(1)</script>', excerpt: 'Plain text', featured_image_path: '/assets/images/event.jpg' },
     { slug: 'javascript:alert(1)', title: 'Unsafe' },
+    null, {}, { slug: 'missing-title' },
   ] });
   assert.equal(container.children.length, 1);
   assert.equal(container.children[0].href, '/news/safe-article');

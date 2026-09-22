@@ -9,7 +9,7 @@
     const { articles } = await response.json();
     if (!Array.isArray(articles)) throw new Error('Invalid news response');
     for (const article of articles) {
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(article.slug)) continue;
+      if (!article || typeof article.slug !== 'string' || typeof article.title !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(article.slug)) continue;
       const card = document.createElement('a');
       card.className = 'card card-pad';
       card.href = '/news/' + article.slug;
