@@ -16,9 +16,9 @@
 <link rel="icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="assets/images/favicon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
-<link rel="stylesheet" href="assets/css/product-directory.css?v=20260922">
+<link rel="stylesheet" href="assets/css/product-directory.css?v=20261006-directory">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"I-Pack Product Catalog","url":"https://www.ipackautoparts.com/product","description":"Published aftermarket auto lights and body parts from I-Pack Auto Parts."}</script>
-<link rel="stylesheet" href="/assets/css/product-menu.css?v=20260922-menu">
+<link rel="stylesheet" href="/assets/css/product-menu.css?v=20261006-directory">
 </head>
 <body>
 <div class="topbar">
@@ -41,7 +41,8 @@
   <section class="product-directory-hero">
     <div class="product-directory-container">
       <p class="product-directory-eyebrow">I-PACK PRODUCT LINE</p>
-      <h1>Product</h1>
+      <nav class="product-directory-breadcrumb" id="product-directory-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/product">Product</a></nav>
+      <h1 id="product-directory-heading">Product</h1>
     </div>
   </section>
   <section class="product-directory-section" aria-labelledby="product-directory-title">
@@ -62,7 +63,10 @@
           </select>
         </label>
       </div>
-      <div class="product-directory-grid" id="product-directory-grid" aria-busy="true"></div>
+      <div class="product-directory-layout">
+        <nav class="product-directory-tree" id="product-directory-tree" aria-label="Product categories"></nav>
+        <div class="product-directory-grid" id="product-directory-grid" aria-busy="true"></div>
+      </div>
       <nav class="product-directory-pagination" aria-label="Product pages">
         <button type="button" id="product-directory-prev">Previous</button>
         <span id="product-directory-page" aria-live="polite"></span>
@@ -83,7 +87,7 @@
 <a aria-label="Chat on WhatsApp" class="floating-whatsapp whatsapp-visual-v17" href="https://wa.me/8618620780862" rel="noopener" target="_blank"><span class="wa-icon-wrap"><img alt="WhatsApp auto parts inquiry" decoding="async" loading="lazy" src="assets/images/whatsapp-auto-parts.webp"></span><span class="wa-label">WhatsApp</span></a>
 <script src="/assets/js/site-insights.js?v=20260908-leads"></script>
 <script src="assets/js/main.js?v=20260922-product"></script>
-<script src="/assets/js/product-menu.js?v=20260922-menu"></script>
-<script src="assets/js/product-directory.js?v=20260922-menu-category"></script>
+<script src="/assets/js/product-menu.js?v=20261006-directory"></script>
+<script src="assets/js/product-directory.js?v=20261006-directory"></script>
 </body>
 </html>

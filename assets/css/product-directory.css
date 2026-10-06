@@ -47,6 +47,9 @@
   line-height: 1;
 }
 
+.product-directory-breadcrumb { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 18px; color: #64748b; font-size: 13px; }
+.product-directory-breadcrumb a { color: #475569; }
+
 .product-directory-section {
   padding: 58px 0 80px;
   background: #fff;
@@ -78,6 +81,14 @@
   background: #fff;
   color: #111827;
 }
+
+.product-directory-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: start; gap: 24px; }
+.product-directory-tree { border: 1px solid #dfe4ea; padding: 16px; }
+.product-directory-tree ul { display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
+.product-directory-tree ul ul { margin: 3px 0 9px 13px; padding-left: 10px; border-left: 1px solid #e2e8f0; }
+.product-directory-tree a { display: flex; justify-content: space-between; gap: 8px; padding: 8px 5px; color: #334155; font-size: 13px; line-height: 1.35; }
+.product-directory-tree a:hover, .product-directory-tree a.is-active { color: #c9282d; }
+.product-directory-tree a span { flex: 0 0 auto; color: #64748b; font-size: 12px; }
 
 .product-directory-grid {
   display: grid;
@@ -182,6 +193,8 @@
 
 .product-directory-pagination button:disabled { opacity: .45; }
 .product-directory-error { grid-column: 1 / -1; padding: 40px 0; text-align: center; }
+.product-directory-empty { grid-column: 1 / -1; padding: 40px 0; color: #64748b; text-align: center; }
+.directory-card-category { color: inherit; text-decoration: underline; text-decoration-color: #cbd5e1; text-underline-offset: 2px; }
 
 @media (max-width: 1180px) {
   .product-directory-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -189,6 +202,7 @@
 
 @media (max-width: 900px) {
   .product-directory-container { width: min(100% - 40px, 760px); }
+  .product-directory-layout { grid-template-columns: 190px minmax(0, 1fr); gap: 16px; }
   .product-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
@@ -197,6 +211,10 @@
   .product-directory-hero { padding: 52px 0 42px; }
   .product-directory-section { padding: 34px 0 58px; }
   .product-directory-toolbar { justify-content: space-between; gap: 12px; }
+  .product-directory-layout { grid-template-columns: 1fr; gap: 18px; }
+  .product-directory-tree { max-height: 240px; overflow: auto; }
+  .product-directory-tree ul ul { margin-bottom: 4px; }
+  .product-directory-breadcrumb { margin-bottom: 13px; }
   .product-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .directory-card-body { min-height: 170px; padding: 14px 12px; }
   .directory-card-body h3 { font-size: 14px; }

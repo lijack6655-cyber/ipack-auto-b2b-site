@@ -275,6 +275,10 @@
       "destination": "https://ipack-admin.vercel.app/api/catalog"
     },
     {
+      "source": "/api/categories",
+      "destination": "https://ipack-admin.vercel.app/api/categories"
+    },
+    {
       "source": "/api/rfq",
       "destination": "https://ipack-admin.vercel.app/api/rfq"
     },

@@ -111,24 +111,37 @@
     if(event.key === 'Escape' && !panel.hidden) close(true);
   });
 
-  const staticGuides = [
-    ['Headlights', '/categories/aftermarket-headlights-supplier', '/assets/images/headlights.webp'],
-    ['Tail Lights', '/categories/aftermarket-tail-lights-supplier', '/assets/images/tail-lights.webp'],
-    ['Fog Lights', '/categories/fog-lights-supplier', '/assets/images/fog-lights.webp'],
-    ['Mirror Covers', '/categories/car-mirror-covers-supplier', '/assets/images/mirror-covers.webp'],
-    ['Bumper Parts', '/categories/car-bumper-parts-supplier', '/assets/images/bumper-parts.webp']
-  ];
+  const categoryPromiseKey = '__ipackCategoryPromise';
+  const loadCategories = () => {
+    if(window[categoryPromiseKey]) return window[categoryPromiseKey];
+    window[categoryPromiseKey] = fetch('/api/categories', {cache: 'no-store', headers: {Accept: 'application/json'}})
+      .then(async response => { if(!response.ok) throw new Error('Categories unavailable'); const data = await response.json(); if(!Array.isArray(data)) throw new Error('Invalid categories'); return data; });
+    return window[categoryPromiseKey];
+  };
   const productTitle = product => product.displayTitle || product.title || 'Auto Part';
 
-  function renderCatalog(products) {
-    const categories = [...new Set(products.map(product => String(product.category || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-    const byCategory = new Map(categories.map(category => [category, products.find(product => product.category === category)]));
-    const cards = staticGuides.filter(([category]) => byCategory.has(category)).map(([category, , guideImage]) => {
-      const product = byCategory.get(category);
-      const src = product.image ? window.catalogImage(product.image) : guideImage;
-      return `<a class="product-menu-category-card" href="/product?category=${encodeURIComponent(category)}"><img src="${window.catalogEscape(src)}" alt="" loading="lazy" decoding="async"><span>${window.catalogEscape(category)}</span></a>`;
+  function renderCatalog(products, categories) {
+    const roots = categories.filter(item => !item.parentId);
+    const children = root => categories.filter(item => item.parentId === root.id);
+    const matches = (product, item, root) => {
+      const path = Array.isArray(product.categoryPath) ? product.categoryPath : [];
+      if(path.some(part => part.id === item.id || part.slug === item.slug)) return true;
+      if(root && path.some(part => part.id === root.id || part.slug === root.slug)) return true;
+      const aliases = [item.name, item.slug, ...(item.aliases || [])].map(value => String(value).toLowerCase());
+      return aliases.includes(String(product.category || '').trim().toLowerCase());
+    };
+    const byCategory = item => products.find(product => matches(product, item, item.parentId ? categories.find(entry => entry.id === item.parentId) : null));
+    const cards = roots.map(root => {
+      const product = byCategory(root) || children(root).map(byCategory).find(Boolean);
+      const src = product && product.image ? window.catalogImage(product.image) : '/assets/images/headlights.webp';
+      const total = Number(root.count || 0) + children(root).reduce((sum, child) => sum + Number(child.count || 0), 0);
+      return `<a class="product-menu-category-card" href="/product?category=${encodeURIComponent(root.slug)}"><img src="${window.catalogEscape(src)}" alt="" loading="lazy" decoding="async"><span>${window.catalogEscape(root.name)} <small>${total}</small></span></a>`;
     }).join('');
-    const directory = categories.map(category => `<li><a href="/product?category=${encodeURIComponent(category)}">${window.catalogEscape(category)}</a></li>`).join('');
+    const directory = roots.map(root => {
+      const kids = children(root);
+      const total = Number(root.count || 0) + kids.reduce((sum, child) => sum + Number(child.count || 0), 0);
+      return `<li><a href="/product?category=${encodeURIComponent(root.slug)}">${window.catalogEscape(root.name)} <span>${total}</span></a>${kids.length ? `<ul>${kids.map(child => `<li><a href="/product?category=${encodeURIComponent(child.slug)}">${window.catalogEscape(child.name)} <span>${Number(child.count || 0)}</span></a></li>`).join('')}</ul>` : ''}</li>`;
+    }).join('');
     const featuredProducts = products.filter(product => product.featured === true).slice(0, 5);
     const featured = featuredProducts.map(product => {
       const title = productTitle(product);
@@ -138,15 +151,14 @@
     panel.innerHTML = `<div class="product-menu-directory"><p class="product-menu-kicker">Browse product line</p><ul>${directory}</ul><div class="product-menu-utility"><a href="/product">All Products</a><a href="/products">Search</a><a href="/contact">Contact</a></div></div><div class="product-menu-showcase"><div class="product-menu-heading"><div><p class="product-menu-kicker">Explore by category</p><h2>Parts for your next order</h2></div><a href="/product">View all products <span aria-hidden="true">→</span></a></div><div class="product-menu-category-grid">${cards}</div>${featuredSection}</div>`;
   }
 
-  function renderFallback(note = 'Product categories are temporarily unavailable. Browse the category guides or contact us for help.') {
-    const guides = staticGuides.map(([name, url]) => `<li><a href="${url}">${window.catalogEscape(name)}</a></li>`).join('');
-    panel.innerHTML = `<div class="product-menu-directory product-menu-fallback"><p class="product-menu-kicker">Browse product line</p><ul><li><a href="/product">All Products</a></li>${guides}</ul><div class="product-menu-utility"><a href="/products">Search</a><a href="/contact">Contact</a></div><p class="product-menu-note">${window.catalogEscape(note)}</p></div>`;
+  function renderFallback(note = 'Product categories are temporarily unavailable. Browse all products or contact us for help.') {
+    panel.innerHTML = `<div class="product-menu-directory product-menu-fallback"><p class="product-menu-kicker">Browse product line</p><ul><li><a href="/product">All Products</a></li></ul><div class="product-menu-utility"><a href="/products">Search</a><a href="/contact">Contact</a></div><p class="product-menu-note">${window.catalogEscape(note)}</p></div>`;
   }
 
   function hydrateCatalog() {
     if(catalogStarted) return;
     catalogStarted = true;
-    window.loadProductsData().then(renderCatalog).catch(() => renderFallback());
+    Promise.all([window.loadProductsData(), loadCategories()]).then(([products, categories]) => renderCatalog(products, categories)).catch(() => renderFallback('Live product categories are unavailable. Browse all products or contact us for help.'));
   }
   renderFallback('Loading live categories…');
 })();
