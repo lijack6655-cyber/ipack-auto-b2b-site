@@ -16,6 +16,7 @@
   let categories = [];
   let page = 1;
   let selectedCategory = null;
+  let unknownCategory = null;
   const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const imageUrl = value => {
     const path = String(value || '');
@@ -39,6 +40,7 @@
     return item.parentId ? path.some(part => part.id === item.id || part.slug === item.slug) : path.some(part => part.id === item.id) || path[0].slug === item.slug;
   }
   function visibleProducts() {
+    if(unknownCategory) return [];
     let items = products.filter(product => !selectedCategory || belongs(product, selectedCategory));
     if(sort.value === 'title') items.sort((a, b) => String(a.displayTitle || a.title).localeCompare(String(b.displayTitle || b.title)));
     else if(sort.value === 'category') items.sort((a, b) => String(a.category || '').localeCompare(String(b.category || '')) || String(a.title || '').localeCompare(String(b.title || '')));
@@ -66,19 +68,20 @@
       const children = childrenOf(root.id);
       const total = Number(root.count || 0) + children.reduce((sum, child) => sum + Number(child.count || 0), 0);
       const active = selectedCategory && (selectedCategory.id === root.id || selectedCategory.parentId === root.id);
-      return `<li><a class="${active && !selectedCategory.parentId ? 'is-active' : ''}" href="${escapeHtml(categoryUrl(root))}">${escapeHtml(root.name)} <span>${total}</span></a>${children.length ? `<ul>${children.map(child => `<li><a class="${selectedCategory && selectedCategory.id === child.id ? 'is-active' : ''}" href="${escapeHtml(categoryUrl(child))}">${escapeHtml(child.name)} <span>${Number(child.count || 0)}</span></a></li>`).join('')}</ul>` : ''}</li>`;
+      return `<li><a data-category-slug="${escapeHtml(root.slug)}" class="${active && !selectedCategory.parentId ? 'is-active' : ''}" href="${escapeHtml(categoryUrl(root))}">${escapeHtml(root.name)} <span>${total}</span></a>${children.length ? `<ul>${children.map(child => `<li><a data-category-slug="${escapeHtml(child.slug)}" class="${selectedCategory && selectedCategory.id === child.id ? 'is-active' : ''}" href="${escapeHtml(categoryUrl(child))}">${escapeHtml(child.name)} <span>${Number(child.count || 0)}</span></a></li>`).join('')}</ul>` : ''}</li>`;
     }).join('')}</ul>`;
   }
   function renderBreadcrumb() {
     const path = selectedCategory ? categories.find(item => item.id === selectedCategory.parentId) ? [categories.find(item => item.id === selectedCategory.parentId), selectedCategory] : [selectedCategory] : [];
     breadcrumb.innerHTML = `<a href="/">Home</a><span aria-hidden="true">/</span><a href="/product">Product</a>${path.map((item, index) => index === path.length - 1 ? `<span aria-hidden="true">/</span><span aria-current="page">${escapeHtml(item.name)}</span>` : `<span aria-hidden="true">/</span><a href="${escapeHtml(categoryUrl(item))}">${escapeHtml(item.name)}</a>`).join('')}`;
-    heading.textContent = selectedCategory ? selectedCategory.name : 'Product';
+    if(unknownCategory) breadcrumb.insertAdjacentHTML('beforeend', `<span aria-hidden="true">/</span><span aria-current="page">Unknown: ${escapeHtml(unknownCategory)}</span>`);
+    heading.textContent = unknownCategory ? 'Category unavailable' : selectedCategory ? selectedCategory.name : 'Product';
   }
   function render() {
     const items = visibleProducts();
     const pages = Math.max(1, Math.ceil(items.length / pageSize));
     page = Math.min(page, pages);
-    grid.innerHTML = items.length ? items.slice((page - 1) * pageSize, page * pageSize).map(card).join('') : '<p class="product-directory-empty">No products found in this category.</p>';
+    grid.innerHTML = items.length ? items.slice((page - 1) * pageSize, page * pageSize).map(card).join('') : `<p class="product-directory-empty">${unknownCategory ? 'This category is unavailable. Choose a category or view all products.' : 'No products found in this category.'}</p>`;
     grid.setAttribute('aria-busy', 'false');
     count.textContent = `${items.length} items`;
     pageLabel.textContent = `Page ${page} of ${pages}`;
@@ -89,6 +92,7 @@
   }
   function setSelected(item) {
     selectedCategory = item;
+    unknownCategory = null;
     page = 1;
     category.value = item ? item.slug : '';
     const url = new URL(location.href);
@@ -103,7 +107,11 @@
     if(!link) return;
     const slug = new URL(link.href, location.href).searchParams.get('category');
     const item = categories.find(entry => entry.slug === slug);
-    if(item) { event.preventDefault(); setSelected(item); }
+    if(item) {
+      event.preventDefault();
+      setSelected(item);
+      [...tree.querySelectorAll('[data-category-slug]')].find(link => link.dataset.categorySlug === item.slug)?.focus({preventScroll: true});
+    }
   });
   sort.addEventListener('change', () => { page = 1; render(); });
   prev.addEventListener('click', () => { if(page > 1) { page -= 1; render(); scrollTo({top: document.querySelector('.product-directory-section').offsetTop, behavior: 'smooth'}); } });
@@ -117,6 +125,7 @@
       categories = treeData;
       const requested = new URLSearchParams(location.search).get('category');
       selectedCategory = requested ? findCategory(requested) : null;
+      unknownCategory = requested && !selectedCategory ? requested : null;
       category.innerHTML = '<option value="">All categories</option>' + roots().map(root => {
         const kids = childrenOf(root.id);
         const rootTotal = Number(root.count || 0) + kids.reduce((sum, child) => sum + Number(child.count || 0), 0);
@@ -130,16 +139,6 @@
           canonical.searchParams.set('category', selectedCategory.slug);
           history.replaceState(null, '', canonical.pathname + canonical.search + canonical.hash);
         }
-      }
-      if(requested && !selectedCategory) {
-        count.textContent = '0 items';
-        grid.innerHTML = '<p class="product-directory-empty">This category is unavailable. Choose a category or view all products.</p>';
-        grid.setAttribute('aria-busy', 'false');
-        pageLabel.textContent = 'Page 1 of 1'; prev.disabled = true; next.disabled = true;
-        renderTree(); renderBreadcrumb();
-        heading.textContent = 'Category unavailable';
-        breadcrumb.insertAdjacentHTML('beforeend', `<span aria-hidden="true">/</span><span aria-current="page">Unknown: ${escapeHtml(requested)}</span>`);
-        return;
       }
       render();
     })

@@ -49,6 +49,9 @@ async function run(search) {
   const unknown = await run('?category=deleted-category');
   assert.equal(unknown.elements['product-directory-count'].textContent, '0 items');
   assert.match(unknown.elements['product-directory-grid'].innerHTML, /category is unavailable/);
+  unknown.elements['product-directory-sort'].handlers.change();
+  assert.equal(unknown.elements['product-directory-count'].textContent, '0 items');
+  assert.match(unknown.elements['product-directory-grid'].innerHTML, /category is unavailable/);
   assert.doesNotMatch(root.elements['product-directory-tree'].innerHTML, /<Mirror>/);
-  console.log('Product directory root, child, legacy alias, unknown category, counts, and escaping checks passed.');
+  console.log('Product directory root, child, legacy alias, unknown category after sorting, counts, and escaping checks passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

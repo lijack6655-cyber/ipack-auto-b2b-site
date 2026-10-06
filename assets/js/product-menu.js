@@ -158,12 +158,7 @@
   function hydrateCatalog() {
     if(catalogStarted) return;
     catalogStarted = true;
-    Promise.all([window.loadProductsData(), loadCategories()]).then(([products, categories]) => renderCatalog(products, categories)).catch(() => {
-      window.loadProductsData().then(products => {
-        const categories = [...new Set(products.map(product => String(product.category || '').trim()).filter(Boolean))].map((name, index) => ({id: `legacy-${index}`, name, slug: name, count: products.filter(product => product.category === name).length}));
-        renderCatalog(products, categories);
-      }).catch(() => renderFallback());
-    });
+    Promise.all([window.loadProductsData(), loadCategories()]).then(([products, categories]) => renderCatalog(products, categories)).catch(() => renderFallback('Live product categories are unavailable. Browse all products or contact us for help.'));
   }
   renderFallback('Loading live categories…');
 })();
