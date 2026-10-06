@@ -29,6 +29,16 @@ async function check(payload, ok = true) {
   assert.match((await check({ articles: [] })).status.textContent, /will appear/);
   assert.match((await check(null, false)).status.textContent, /temporarily unavailable/);
   assert.match((await check({})).status.textContent, /temporarily unavailable/);
+  for (const [imagePath, expectedImages] of [
+    ['/api/product-media/57897213-5c9a-48b3-81c4-271f0b33739f', 1],
+    ['/api/product-media/invalid', 0],
+    ['/api/product-media/57897213-5c9a-48b3-81c4-271f0b33739f/../private', 0],
+    ['javascript:alert(1)', 0],
+  ]) {
+    const result = await check({ articles: [{ slug: 'uploaded-image', title: 'Image', featured_image_path: imagePath }] });
+    assert.equal(result.container.children[0].children.length, 2 + expectedImages);
+    if (expectedImages) assert.equal(result.container.children[0].children[0].src, imagePath);
+  }
   const config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
   for (const route of ['/news/:slug', '/api/articles', '/sitemap-articles.xml']) assert(config.rewrites.some(r => r.source === route));
   for (const route of ['/news/(.*)', '/sitemap-articles.xml']) assert(config.headers.some(r => r.source === route && r.headers.some(h => h.key === 'Cache-Control' && h.value === 'no-store')));

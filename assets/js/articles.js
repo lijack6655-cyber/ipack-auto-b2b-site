@@ -15,9 +15,10 @@
       card.href = '/news/' + article.slug;
       const imagePath = article.featured_image_path;
       const localImage = typeof imagePath === 'string' && /^\/assets\/[a-zA-Z0-9/_ .-]+$/.test(imagePath) && !imagePath.includes('..');
+      const uploadedImage = typeof imagePath === 'string' && /^\/api\/product-media\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(imagePath);
       let secureImage = false;
       try { secureImage = typeof imagePath === 'string' && new URL(imagePath).protocol === 'https:'; } catch { /* Relative paths handled above. */ }
-      if (localImage || secureImage) {
+      if (localImage || uploadedImage || secureImage) {
         const img = document.createElement('img');
         img.src = article.featured_image_path;
         img.alt = article.title;
