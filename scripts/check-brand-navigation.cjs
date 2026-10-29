@@ -88,9 +88,9 @@ assert.match(home, /class="brand-contact brand-contact-quote" href="#request-quo
 assert.match(html, /class="brand-contact brand-contact-quote" href="\/#request-quote"/);
 assert.match(html, /<video[^>]*controls[^>]*preload="none"/);
 assert(!/<video[^>]*(?:autoplay|\bloop\b)/.test(html), 'Brand film plays only by buyer action');
-assert.match(css, /animation: brand-contact-arrive 1\.4s [^;]+ 1;/);
-assert(!css.includes('infinite'));
-assert.match(css, /prefers-reduced-motion: reduce[\s\S]*animation: none; transition: none/);
+assert.match(css, /animation: brand-contact-ring 4\.2s [^;]+ infinite;/);
+assert.match(css, /28\.5714%, 100%[^}]+opacity: 0/);
+assert.match(css, /prefers-reduced-motion: reduce[\s\S]*animation: none; opacity: 0/);
 assert.match(css, /\.home-page:has\(\.rfq-section :focus\) \.brand-contact,[\s\S]*visibility: hidden/);
 for (const match of html.matchAll(/(?:src|href)="(\/assets\/[^"?]+)(?:\?[^"\s]*)?"/g)) {
   assert(fs.existsSync(path.join(root, match[1])), `Local asset exists: ${match[1]}`);
