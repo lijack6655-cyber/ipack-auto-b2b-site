@@ -1,4 +1,36 @@
 
+// Keep the company hub discoverable in static pages and generated page templates.
+function normalizeBrandNavigation(nav, pathname, baseURL) {
+  if (!nav) return;
+  const normalizePath = value => value.replace(/\/+$/, '').replace(/\.html$/, '') || '/';
+  const pathOf = link => {
+    try { return normalizePath(new URL(link.href, baseURL).pathname); }
+    catch (_) { return ''; }
+  };
+  const links = [...nav.querySelectorAll('a')];
+  const existing = links.filter(link => pathOf(link) === '/our-brand');
+  const brand = existing.shift() || document.createElement('a');
+  existing.forEach(link => link.remove());
+  brand.href = '/our-brand';
+  brand.textContent = 'Our Brand';
+  const blog = links.find(link => pathOf(link) === '/blog');
+  if (blog) blog.after(brand);
+  else if (!brand.parentElement) nav.appendChild(brand);
+  const active = normalizePath(pathname) === '/our-brand';
+  brand.classList.toggle('active', active);
+  if (active) {
+    links.forEach(link => {
+      if (link !== brand) {
+        link.classList.remove('active');
+        link.removeAttribute('aria-current');
+      }
+    });
+    brand.setAttribute('aria-current', 'page');
+  } else brand.removeAttribute('aria-current');
+}
+
+normalizeBrandNavigation(document.querySelector('.main-nav'), location.pathname, location.href);
+
 const menuToggle = document.querySelector('.menu-toggle');
 const mainNav = document.querySelector('.main-nav');
 if(mainNav) {
