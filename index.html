@@ -92,6 +92,7 @@
     }
   ]
 }</script><link rel="stylesheet" href="/assets/css/product-menu.css?v=20261006-directory">
+<link rel="stylesheet" href="/assets/css/home-video.css?v=20261029">
 </head>
 <body><div class="topbar">
 <div class="container topbar-inner">
@@ -110,30 +111,48 @@
 </div>
 </header>
 <main>
-<section class="hero-auto-parts">
-<div class="hero-bg"></div>
-<div class="hero-overlay"></div>
-<div class="container hero-inner">
-<div class="hero-content">
-<p class="hero-eyebrow">B2B RFQ Supplier for Japanese Vehicle Parts</p>
-<h1>
+<section class="home-video-hero" aria-labelledby="home-video-title">
+<img class="home-video-poster" src="/assets/images/ipack-video-poster-20261029.jpg" alt="" fetchpriority="high"/>
+<video class="home-video-background" id="home-background-video" data-src="/assets/videos/ipack-home-20261029.mp4" poster="/assets/images/ipack-video-poster-20261029.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
+<div class="home-video-shade"></div>
+<div class="container home-video-inner">
+<div class="home-video-copy">
+<p class="home-video-eyebrow">I-PACK AUTO PARTS</p>
+<h1 id="home-video-title">
         Aftermarket Japanese Auto Lights
         <span>&amp; Body Parts Supplier</span>
 </h1>
-<p class="hero-description">
-        OEM and wholesale auto parts for Toyota, Honda, Suzuki, Nissan, Mitsubishi and more.
-        Send OE number, vehicle model or product photos to confirm fitment and get a fast quotation.
+<p class="home-video-description">
+        Explore auto lights and body parts for Japanese vehicles.
+        Share your OE number, vehicle model or product photos to confirm fitment and request a quotation.
       </p>
-<div class="hero-actions">
-<a class="hero-btn primary" href="contact">Get Quote</a>
-<a class="hero-btn secondary" href="products">Browse Products</a>
+<div class="home-video-actions">
+<a class="home-video-link home-video-link-primary" href="contact">Get Quote <span aria-hidden="true">↗</span></a>
+<a class="home-video-link home-video-link-secondary" href="product">Browse Products <span aria-hidden="true">→</span></a>
 </div>
-<div class="hero-tags">
+<div class="home-video-tags">
 <span>OE Matching</span>
 <span>Mixed Orders</span>
 <span>Export Packing</span>
 <span>Wholesale Supply</span>
 </div>
+</div>
+</div>
+<button class="home-video-toggle" id="home-video-toggle" type="button" aria-controls="home-background-video" hidden>Play background video</button>
+</section>
+<section class="home-video-story" aria-labelledby="home-video-story-title">
+<div class="container home-video-story-grid">
+<div class="home-video-story-copy">
+<p class="home-video-eyebrow">I-PACK IN MOTION</p>
+<h2 id="home-video-story-title">A closer look<br/>at I-PACK.</h2>
+<p>Watch our company video, then tell us what you are looking for. Send your vehicle model, year, OE number or product photo so we can help confirm fitment before quotation.</p>
+<a class="home-video-story-link" href="about">Discover I-PACK <span aria-hidden="true">→</span></a>
+</div>
+<div class="home-video-player-wrap">
+<video class="home-video-player" id="home-company-video" width="854" height="480" controls playsinline preload="none" poster="/assets/images/ipack-video-poster-20261029.jpg" aria-label="I-PACK company video">
+<source src="/assets/videos/ipack-home-20261029.mp4" type="video/mp4"/>
+Your browser does not support embedded video. <a href="/assets/videos/ipack-home-20261029.mp4">Open the I-PACK company video</a>.
+</video>
 </div>
 </div>
 </section>
@@ -796,4 +815,5 @@
 <script src="/assets/js/site-insights.js?v=20260908-leads"></script>
 <script src="assets/js/main.js?v=20260908-products"></script>
 <script src="/assets/js/product-menu.js?v=20261006-directory"></script><a class="floating-quote" href="contact">Get Quote</a>
+<script src="/assets/js/home-video.js?v=20261029"></script>
 </body></html>
