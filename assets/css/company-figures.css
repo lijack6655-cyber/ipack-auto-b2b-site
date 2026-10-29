@@ -1,0 +1,20 @@
+.company-figures {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding-top: 28px;
+  border-top: 1px solid #dedfd8;
+  color: #20221f;
+}
+.company-figures > div { display: flex; flex-direction: column; min-width: 0; gap: 8px; }
+.company-figures dt { color: #5c605b; font-size: 12px; line-height: 1.5; }
+.company-figures dd { order: -1; margin: 0; white-space: nowrap; font-size: clamp(23px, 2.7vw, 38px); font-weight: 500; line-height: 1.2; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.company-figure-accessible { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.home-page .home-video-story-grid { row-gap: 32px; }
+.home-video-story-grid > .company-figures, .company-figures-block { grid-column: 1 / -1; }
+.brand-page .company-figures-source { margin: 18px 0 0; font-size: 12px; color: #5c605b; }
+@media (max-width: 760px) {
+  .company-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 20px; }
+  .company-figures dd { font-size: clamp(23px, 5vw, 32px); }
+}

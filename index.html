@@ -91,9 +91,11 @@
       }
     }
   ]
-}</script><link rel="stylesheet" href="/assets/css/product-menu.css?v=20261006-directory">
+}</script><link rel="stylesheet" href="/assets/css/product-menu.css?v=20261029-brand2">
 <link rel="stylesheet" href="/assets/css/home-video.css?v=20261029">
-<link rel="stylesheet" href="/assets/css/home-design.css?v=20261029">
+<link rel="stylesheet" href="/assets/css/home-design.css?v=20261029-brand2">
+<link rel="stylesheet" href="/assets/css/brand-contact.css?v=20261029">
+<link rel="stylesheet" href="/assets/css/company-figures.css?v=20261029-figures1">
 </head>
 <body class="home-page"><div class="topbar">
 <div class="container topbar-inner">
@@ -108,7 +110,7 @@
 <div class="container nav-wrap">
 <a class="brand brand-with-logo" href="/"><img alt="I-Pack Auto Parts logo" class="brand-logo-img" decoding="async" loading="lazy" src="assets/images/company-logo.webp"/><span class="brand-wording"><strong>I-PACK</strong><em>Auto Parts</em></span></a>
 <button aria-label="Open menu" class="menu-toggle" type="button"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
-<nav class="main-nav"><a class="active" href="/">Home</a><a href="product">Product</a><a href="products">Search</a><a href="blog">Blog</a><a href="about">About</a><a href="contact">Contact</a><a class="home-nav-quote" href="#request-quote">Get Quote</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a class="active" href="/">Home</a><a href="product">Product</a><a href="products">Search</a><a href="blog">Blog</a><a href="/our-brand">Our Brand</a><a href="about">About</a><a href="contact">Contact</a><a class="home-nav-quote" href="#request-quote">Get Quote</a></nav>
 </div>
 </header>
 <main>
@@ -134,6 +136,28 @@
 </div>
 <button class="home-video-toggle" id="home-video-toggle" type="button" aria-controls="home-background-video" hidden>Play background video</button>
 </section>
+<section class="home-video-story" aria-labelledby="home-video-story-title">
+<div class="container home-video-story-grid">
+<div class="home-video-story-copy">
+<h2 id="home-video-story-title">Your sourcing details.<br/>Our starting point.</h2>
+<p>Based in Guangzhou, I-PACK supplies Japanese auto lights and body parts. Start with a part number, then confirm your order details with our team.</p>
+<ul class="home-company-strengths"><li>OE matching</li><li>Mixed orders</li><li>Export packing</li></ul>
+<a class="home-video-story-link" href="/our-brand">Meet I-PACK <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</div>
+<div class="home-video-player-wrap">
+<video class="home-video-player" id="home-company-video" width="854" height="480" controls playsinline preload="none" poster="/assets/images/ipack-video-poster-20261029.jpg" aria-label="I-PACK company video">
+<source src="/assets/videos/ipack-home-20261029.mp4" type="video/mp4"/>
+Your browser does not support embedded video. <a href="/assets/videos/ipack-home-20261029.mp4">Open the I-PACK company video</a>.
+</video>
+</div>
+<dl class="company-figures" aria-label="I-PACK company figures">
+<div><dt>Established</dt><dd>Since 2009</dd></div>
+<div><dt>Auto parts SKUs</dt><dd><span class="company-figure-accessible">30,500+</span><span data-company-count="30500" aria-hidden="true">30,500+</span></dd></div>
+<div><dt>Export countries</dt><dd><span class="company-figure-accessible">60+</span><span data-company-count="60" aria-hidden="true">60+</span></dd></div>
+<div><dt>Overseas agents</dt><dd><span class="company-figure-accessible">20+</span><span data-company-count="20" aria-hidden="true">20+</span></dd></div>
+</dl>
+</div>
+</section>
 <section class="home-categories home-section" aria-labelledby="home-categories-title">
 <div class="container">
 <div class="home-section-head"><div><h2 id="home-categories-title">Find your product family.</h2><p>Auto lights and exterior parts for Japanese vehicles.</p></div><a class="home-text-link" href="product">Explore the catalog <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
@@ -145,21 +169,6 @@
 <div class="home-section-head"><div><h2 id="home-featured-title">From our catalog.</h2><p>Explore selected parts, then build your RFQ list.</p></div><a class="home-text-link" href="product">View all products <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
 <div class="home-product-grid product-grid" id="home-featured-grid" aria-busy="true"><p class="home-catalog-status" role="status">Loading selected products…</p></div>
 </div></section>
-<section class="home-video-story" aria-labelledby="home-video-story-title">
-<div class="container home-video-story-grid">
-<div class="home-video-story-copy">
-<h2 id="home-video-story-title">A closer look<br/>at I-PACK.</h2>
-<p>Based in Guangzhou, I-Pack supplies aftermarket auto lights and body parts for B2B buyers. Meet the company behind your next sourcing conversation.</p>
-<a class="home-video-story-link" href="about">Discover I-PACK <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-</div>
-<div class="home-video-player-wrap">
-<video class="home-video-player" id="home-company-video" width="854" height="480" controls playsinline preload="none" poster="/assets/images/ipack-video-poster-20261029.jpg" aria-label="I-PACK company video">
-<source src="/assets/videos/ipack-home-20261029.mp4" type="video/mp4"/>
-Your browser does not support embedded video. <a href="/assets/videos/ipack-home-20261029.mp4">Open the I-PACK company video</a>.
-</video>
-</div>
-</div>
-</section>
 <section class="home-process home-section" aria-labelledby="home-process-title">
 <div class="container">
 <div class="home-section-head"><div><h2 id="home-process-title">From part number to quotation.</h2><p>A clear starting point for your next order.</p></div><a class="home-text-link" href="#request-quote">Start your inquiry <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
@@ -233,6 +242,7 @@ Your browser does not support embedded video. <a href="/assets/videos/ipack-home
 <div>
 <h4>Core Pages</h4>
 <a href="product">Product Catalog</a><a href="blog">Blog / Buyer Guides</a>
+<a href="/our-brand">Our Brand</a>
 <a href="oe-number-search">OE Number Search</a>
 <a href="vehicle-search">Vehicle Search</a>
 <a href="quote-list">Inquiry List</a>
@@ -255,10 +265,12 @@ Your browser does not support embedded video. <a href="/assets/videos/ipack-home
 <span>© 2026 Guangzhou I-Pack Auto Parts Co., Limited. All rights reserved.</span>
 </div>
 </footer>
-<a aria-label="Chat on WhatsApp" class="home-whatsapp" href="https://wa.me/8618620780862?text=Hi%2C%20I%20am%20interested%20in%20I-Pack%20auto%20parts.%20Please%20help%20confirm%20fitment%20and%20quote.%20Product%20/%20OE%20number%3A%20Vehicle%20model%20/%20year%3A%20Quantity%3BCan%20we%20chat%3F" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 8.5c.8 3 2.5 4.7 5.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>WhatsApp</span></a>
+<a aria-label="Chat with I-PACK on WhatsApp (opens in a new tab)" class="brand-contact brand-contact-whatsapp" href="https://wa.me/8618620780862?text=Hi%2C%20I%20am%20interested%20in%20I-Pack%20auto%20parts.%20Please%20help%20confirm%20fitment%20and%20quote." rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.6"/><path d="M8 8.5c.8 3 2.5 4.7 5.5 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span><small>I-PACK</small>WhatsApp</span></a>
+<a class="brand-contact brand-contact-quote" href="#request-quote"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Zm10 0v5h4M8 12h8m-8 4h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Get Quote</span><svg class="brand-contact-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 <script src="/assets/js/site-insights.js?v=20260908-leads"></script>
-<script src="assets/js/main.js?v=20260908-products"></script>
+<script src="assets/js/main.js?v=20261029-brand2"></script>
 <script src="/assets/js/product-menu.js?v=20261006-directory"></script>
 <script src="/assets/js/home-video.js?v=20261029"></script>
 <script src="/assets/js/home-design.js?v=20261029"></script>
+<script src="/assets/js/company-figures.js?v=20261029-figures1"></script>
 </body></html>

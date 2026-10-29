@@ -1,0 +1,45 @@
+.brand-contact {
+  position: fixed;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  min-height: 56px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  color: #fff;
+  font: 600 13px/1.15 "Inter", Arial, sans-serif;
+  box-shadow: 0 6px 24px #18201826;
+  transition: transform .22s cubic-bezier(.16, 1, .3, 1), background-color .22s;
+  animation: brand-contact-arrive 1.4s cubic-bezier(.16, 1, .3, 1) 1;
+}
+.brand-contact svg { width: 24px; height: 24px; flex: 0 0 auto; }
+.brand-contact-whatsapp { left: max(24px, env(safe-area-inset-left)); background: #17663d; }
+.brand-contact-whatsapp small { display: block; margin-bottom: 3px; color: #d6eddf; font-size: 11px; font-weight: 500; letter-spacing: .06em; }
+.brand-contact-quote { right: max(24px, env(safe-area-inset-right)); background: #b62520; }
+.brand-contact-quote > svg:first-child { color: #f0d398; }
+.brand-contact .brand-contact-arrow { width: 19px; height: 19px; }
+.brand-contact:hover, .brand-contact:focus-visible { transform: translateY(-3px); color: #fff; }
+.brand-contact-whatsapp:hover { background: #115331; }
+.brand-contact-quote:hover { background: #951d19; }
+.brand-contact:focus-visible { outline: 3px solid #d2aa50; outline-offset: 4px; }
+/* This single, already-visible cue ends by itself; there is no repeating pulse. */
+@keyframes brand-contact-arrive {
+  0%, 100% { transform: translateY(0); }
+  24% { transform: translateY(-7px); }
+  55% { transform: translateY(0); }
+}
+@media (max-width: 760px) {
+  .brand-contact { min-height: 48px; padding: 10px 15px; gap: 8px; bottom: max(12px, env(safe-area-inset-bottom)); font-size: 12px; }
+  .brand-contact-whatsapp { left: max(12px, env(safe-area-inset-left)); }
+  .brand-contact-quote { right: max(12px, env(safe-area-inset-right)); }
+  .brand-contact .brand-contact-arrow { display: none; }
+  .home-page:has(.rfq-section :focus) .brand-contact,
+  .home-page:has(.main-nav.show) .brand-contact { visibility: hidden; pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-contact { animation: none; transition: none; }
+  .brand-contact:hover, .brand-contact:focus-visible { transform: none; }
+}

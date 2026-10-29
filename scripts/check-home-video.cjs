@@ -106,7 +106,7 @@ async function setup({ reduced = false, saveData = false, blocked = false, obser
   assert.equal((html.match(/<h1\b/g) || []).length, 1);
   assert.match(html, /id="home-company-video"[^>]*controls playsinline preload="none"/);
   assert.match(html, /class="home-video-link home-video-link-secondary" href="product"/);
-  assert.match(html, /home-video-hero[\s\S]*home-categories[\s\S]*home-featured[\s\S]*home-video-story[\s\S]*home-process[\s\S]*home-faq[\s\S]*rfq-section/);
+  assert.match(html, /home-video-hero[\s\S]*home-video-story[\s\S]*home-categories[\s\S]*home-featured[\s\S]*home-process[\s\S]*home-faq[\s\S]*rfq-section/);
   assert(!html.includes('home-video-eyebrow'), 'Section headings do not use decorative eyebrows');
   assert.match(html, /name="privacy_consent"|src="assets\/js\/main.js/);
   assert(!/<video\b[^>]*\sautoplay(?:\s|>)/.test(html), 'Playback policy is controlled before the media source is attached');

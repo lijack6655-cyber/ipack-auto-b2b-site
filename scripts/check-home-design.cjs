@@ -41,6 +41,8 @@ async function render({ products = [], categories = [], categoryError = false } 
 
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   assert.equal((html.match(/<section\b/g) || []).length, 7);
+  assert(html.indexOf('class="home-video-story"') < html.indexOf('class="home-categories home-section"'), 'The compact company introduction precedes the catalog');
+  assert(!html.includes('company-building-v12.webp'), 'Detailed company imagery belongs on Our Brand');
   assert.equal((html.match(/action="https:\/\/formspree.io\/f\/xnjybvyy"/g) || []).length, 1);
   for (const name of ['name', 'email', 'vehicle', 'oe_number', 'message']) assert.match(html, new RegExp(`<label[^>]*>[\\s\\S]*?name="${name}"[\\s\\S]*?<\\/label>`));
   for (const name of ['product_photos', 'pasted_image_summary']) assert(html.includes(`name="${name}"`));
