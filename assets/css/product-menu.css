@@ -37,6 +37,16 @@
   .product-menu-category-grid, .product-menu-featured-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* A compact shared header keeps the company hub in the same navigation row. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .site-header .nav-wrap { gap: 12px; }
+  .site-header .brand-wording { display: none; }
+  .site-header .brand-logo-img { width: 90px; }
+  .site-header .main-nav { gap: 10px; }
+  .site-header .main-nav > a, .site-header .product-menu > a { font-size: 12px; white-space: nowrap; }
+  .site-header .main-nav .home-nav-quote { margin-left: 0; padding-inline: 12px; }
+}
+
 @media (max-width: 760px) {
   .main-nav .product-menu { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: center; width: 100%; }
   .main-nav .product-menu > a { width: auto !important; padding: 11px 4px !important; border-bottom: 0; }
