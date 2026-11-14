@@ -210,7 +210,9 @@
   .product-directory-container { width: min(100% - 28px, 520px); }
   .product-directory-hero { padding: 52px 0 42px; }
   .product-directory-section { padding: 34px 0 58px; }
-  .product-directory-toolbar { justify-content: space-between; gap: 12px; }
+  .product-directory-toolbar { display: grid; gap: 12px; }
+  .product-directory-toolbar label { display: grid; grid-template-columns: 70px minmax(0, 1fr); }
+  .product-directory-toolbar select { width: 100%; min-width: 0; }
   .product-directory-layout { grid-template-columns: 1fr; gap: 18px; }
   .product-directory-tree { max-height: 240px; overflow: auto; }
   .product-directory-tree ul ul { margin-bottom: 4px; }
