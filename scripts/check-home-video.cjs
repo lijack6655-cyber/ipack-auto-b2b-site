@@ -13,16 +13,22 @@ function target(properties = {}) {
   }, properties);
 }
 
-async function setup({ reduced = false, saveData = false, blocked = false, observer = true } = {}) {
+async function setup({ reduced = false, saveData = false, blocked = false, observer = true, mobile = false, effectiveType = '4g', downlink = 10, buffering = false, deferCatalog = false } = {}) {
   const classes = new Set();
+  const timers = new Map();
+  let timerId = 0;
+  let releaseCatalog;
   const video = target({
-    paused: true, src: '', muted: false, dataset: { src: '/company.mp4' },
+    paused: true, src: '', muted: false, dataset: { src: '/company.mp4', mobileSrc: '/mobile.mp4' },
+    removeAttribute(name) { if (name === 'src') this.src = ''; },
+    load() {},
     classList: { add: name => classes.add(name), remove: name => classes.delete(name) },
     parentElement: { getBoundingClientRect: () => ({ top: 0, bottom: 700 }) },
     plays: 0,
     play() {
       this.plays++;
       if (blocked) return Promise.reject(new Error('Autoplay blocked'));
+      if (buffering) return new Promise(() => {});
       this.paused = false;
       this.emit('playing');
       return Promise.resolve();
@@ -36,10 +42,14 @@ async function setup({ reduced = false, saveData = false, blocked = false, obser
   const toggle = target({ hidden: true, disabled: false });
   const companyVideo = target({ paused: true });
   const motion = target({ matches: reduced });
-  const connection = target({ saveData });
-  const document = target({ hidden: false, getElementById: id => ({ 'home-background-video': video, 'home-video-toggle': toggle, 'home-company-video': companyVideo })[id] });
+  const connection = target({ saveData, effectiveType, downlink });
+  const document = target({ readyState: 'complete', hidden: false, getElementById: id => ({ 'home-background-video': video, 'home-video-toggle': toggle, 'home-company-video': companyVideo })[id] });
   let intersection;
-  const window = { innerHeight: 900, matchMedia: () => motion };
+  const window = target({ innerHeight: 900, matchMedia: query => query.includes('max-width') ? { matches: mobile } : motion,
+    __ipackHomeReady: deferCatalog ? new Promise(resolve => { releaseCatalog = resolve; }) : Promise.resolve(),
+    setTimeout(fn, ms) { const id = ++timerId; if (ms === 500) queueMicrotask(fn); else timers.set(id, { fn, ms }); return id; },
+    clearTimeout(id) { timers.delete(id); },
+  });
   class IntersectionObserver {
     constructor(callback) { intersection = callback; }
     observe() {}
@@ -48,7 +58,7 @@ async function setup({ reduced = false, saveData = false, blocked = false, obser
   vm.runInNewContext(script, { window, document, navigator: { connection }, IntersectionObserver });
   const settle = () => new Promise(resolve => setImmediate(resolve));
   await settle();
-  return { video, toggle, companyVideo, motion, connection, document, classes, settle, visible: value => intersection([{ isIntersecting: value }]) };
+  return { video, toggle, companyVideo, motion, connection, document, classes, timers, releaseCatalog, settle, visible: value => intersection([{ isIntersecting: value }]) };
 }
 
 (async () => {
@@ -85,7 +95,7 @@ async function setup({ reduced = false, saveData = false, blocked = false, obser
   normal.motion.emit('change');
   assert.equal(normal.video.paused, true);
 
-  for (const preferences of [{ reduced: true }, { saveData: true }, { observer: false }]) {
+  for (const preferences of [{ reduced: true }, { saveData: true }, { observer: false }, { effectiveType: '3g' }, { downlink: .5 }]) {
     const state = await setup(preferences);
     assert.equal(state.video.plays, 0);
     assert.equal(state.video.src, '', 'Avoid requesting background media before explicit play');
@@ -98,9 +108,24 @@ async function setup({ reduced = false, saveData = false, blocked = false, obser
   assert.equal(denied.classes.has('is-playing'), false);
   denied.video.emit('error');
   denied.video.emit('pause');
-  assert.equal(denied.toggle.disabled, true);
-  assert.equal(denied.toggle.textContent, 'Background video unavailable');
+  assert.equal(denied.toggle.disabled, false, 'Transient failure retains manual retry');
+  assert.equal(denied.toggle.textContent, 'Play background video');
   assert.equal(denied.classes.has('is-playing'), false);
+  const delayed = await setup({ deferCatalog: true });
+  assert.equal(delayed.video.src, '', 'Catalog gets priority before background download');
+  delayed.releaseCatalog(); await delayed.settle();
+  assert.equal(delayed.video.src, '/company.mp4');
+  const phone = await setup({ mobile: true });
+  assert.equal(phone.video.src, '/mobile.mp4');
+  const stalled = await setup({ buffering: true });
+  const timeout = [...stalled.timers.values()].find(timer => timer.ms === 8000);
+  assert(timeout, 'Automatic buffering has a finite time budget');
+  timeout.fn();
+  assert.equal(stalled.video.src, '', 'Timeout stops the media download');
+  assert.equal(stalled.classes.has('is-playing'), false);
+  assert.equal(stalled.toggle.textContent, 'Play background video');
+  stalled.toggle.emit('click');
+  assert([...stalled.timers.values()].some(timer => timer.ms === 15000), 'Manual retry receives a separate buffering budget');
 
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   assert.equal((html.match(/<h1\b/g) || []).length, 1);

@@ -5,11 +5,47 @@
 
   const escape = window.catalogEscape;
   const arrow = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const products = window.loadProductsData();
+  function bounded(request) {
+    let timer;
+    return Promise.race([request, new Promise((_, reject) => { timer = window.setTimeout(() => reject(new Error('Catalog timed out')), 8000); })])
+      .finally(() => window.clearTimeout(timer));
+  }
+  function thumbnail(image) {
+    const source = image.getAttribute('src');
+    const size = window.IPACK_HOME_THUMBS?.[source];
+    if (!size) return;
+    image.src = size.small;
+    image.srcset = `${size.small} 320w, ${size.large} 640w`;
+    image.sizes = '(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 42vw, 22vw';
+    image.addEventListener('error', () => { image.removeAttribute('srcset'); image.src = source; }, { once: true });
+  }
+  const products = bounded(window.loadProductsData());
   products.then(items => {
     if (!items) throw new Error('Catalog unavailable');
     const selected = items.filter(item => item.featured === true).slice(0, 4);
-    grid.innerHTML = selected.length ? selected.map(window.productCard).join('') : '<p class="home-catalog-status" role="status">Explore the <a href="/product">full product catalog</a> or <a href="#request-quote">send your requirements</a> for help finding a part.</p>';
+    grid.innerHTML = selected.length ? selected.map(window.productCard).join('').replace(/(<img class="secondary") src=/g, '$1 data-home-src=') : '<p class="home-catalog-status" role="status">Explore the <a href="/product">full product catalog</a> or <a href="#request-quote">send your requirements</a> for help finding a part.</p>';
+    grid.querySelectorAll('img.primary').forEach(thumbnail);
+    grid.querySelectorAll('img.secondary').forEach(image => {
+      const source = image.getAttribute('data-home-src');
+      const card = image.closest('.product-card');
+      card.classList.remove('has-hover-scene');
+      image.removeAttribute('data-home-src');
+      if (!window.matchMedia('(hover: hover)').matches) {
+        card.classList.remove('has-hover-scene');
+        card.querySelector('.thumb-note').textContent = 'Product image';
+        image.remove();
+        return;
+      }
+      const load = () => {
+        card.removeEventListener('pointerenter', load);
+        card.removeEventListener('focusin', load);
+        image.src = source;
+        thumbnail(image);
+      };
+      image.addEventListener('load', () => card.classList.add('has-hover-scene'), { once: true });
+      card.addEventListener('pointerenter', load);
+      card.addEventListener('focusin', load);
+    });
   }).catch(() => {
     grid.innerHTML = '<p class="home-catalog-status" role="status">Selected products are temporarily unavailable. <a href="/product">Try the catalog</a> or <a href="#request-quote">send your requirements</a>.</p>';
   }).finally(() => grid.setAttribute('aria-busy', 'false'));
@@ -22,7 +58,9 @@
       if (!Array.isArray(data)) throw new Error('Invalid categories');
       return data;
     });
-  Promise.all([products, categoryRequest]).then(([items, allCategories]) => {
+  const categoryData = bounded(categoryRequest);
+  window.__ipackHomeReady = Promise.allSettled([products, categoryData]);
+  Promise.all([products, categoryData]).then(([items, allCategories]) => {
     if (!items) throw new Error('Catalog unavailable');
     const roots = allCategories.filter(item => !item.parentId);
     categories.innerHTML = roots.map(category => {
@@ -32,6 +70,7 @@
       const image = product?.image ? `<img src="${escape(window.catalogImage(product.image))}" alt="" loading="lazy" decoding="async" width="320" height="240"/>` : '<div class="home-category-no-image">Explore this category</div>';
       return `<a class="home-category" href="/product?category=${encodeURIComponent(category.slug)}"><div class="home-category-image">${image}</div><div class="home-category-title"><h3>${escape(category.name)}</h3>${arrow}</div></a>`;
     }).join('') || '<p class="home-catalog-status" role="status">Browse the <a href="/product">full product catalog</a> to find your part.</p>';
+    categories.querySelectorAll('img').forEach(thumbnail);
   }).catch(() => {
     categories.innerHTML = '<p class="home-catalog-status" role="status">Product categories are temporarily unavailable. <a href="/product">Browse all products</a> or <a href="#request-quote">ask us about your part</a>.</p>';
   });
