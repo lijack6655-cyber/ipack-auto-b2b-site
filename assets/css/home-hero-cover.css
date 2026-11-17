@@ -1,0 +1,26 @@
+.home-page .home-video-inner { min-height: 800px; padding-block: 64px 76px; }
+.home-page .home-video-copy { max-width: 650px; }
+.home-page .home-video-poster { object-position: center right; }
+.home-page .home-video-copy h1 { font-size: clamp(52px, 4.7vw, 76px); font-weight: 850; line-height: 1.04; letter-spacing: -.03em; }
+.home-page .home-video-copy h1 span { color: #ff3d35; }
+.home-page .home-hero-intro { margin: 0 0 24px; color: #f5c95c; font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.home-hero-intro::after { content: ""; display: block; width: 56px; height: 2px; margin-top: 15px; background: #f5c95c; }
+.home-page .home-video-description { max-width: 565px; font-size: 16px; line-height: 1.8; margin-top: 24px; }
+.home-page .home-video-shade { background: linear-gradient(90deg, rgba(3,5,9,.78), rgba(3,5,9,.4) 43%, rgba(3,5,9,.04) 76%); }
+.home-page .home-video-link { border-radius: 12px; min-height: 54px; padding-inline: 27px; font-size: 14px; }
+.home-page .home-video-link-primary { background: #ee3028; border-color: #ee3028; }
+.home-page .home-video-link svg { display: none; }
+.home-page .home-video-tags { gap: 10px; }
+.home-page .home-video-tags span { border: 1px solid #816826; border-radius: 999px; padding: 8px 15px; background: rgba(10,13,17,.6); font-weight: 650; }
+.home-page .home-video-tags span::before { display: none; }
+@media (max-width: 760px) {
+  .home-page .home-video-inner { min-height: 740px; padding-block: 45px 94px; }
+  .home-page .home-video-copy { max-width: 100%; }
+  .home-page .home-video-copy h1 { font-size: clamp(36px, 9.5vw, 52px); }
+  .home-page .home-hero-intro { font-size: 11px; max-width: 31ch; line-height: 1.6; }
+  .home-page .home-video-description { font-size: 14px; line-height: 1.7; }
+  .home-page .home-video-shade { background: linear-gradient(90deg, rgba(3,5,9,.9), rgba(3,5,9,.58)); }
+  .home-page .home-video-poster { object-position: 67% center; }
+  .home-page .home-video-link { padding-inline: 17px; font-size: 12px; }
+  .home-page .home-video-tags span { padding: 6px 10px; font-size: 11px; }
+}

@@ -101,7 +101,8 @@ let versionedReferences = 0;
 for (const file of new Set([...trackedHTML, 'our-brand.html'])) {
   const page = fs.readFileSync(path.join(root, file), 'utf8');
   for (const match of page.matchAll(/(?:src|href)="([^"\s]*assets\/(?:js\/main\.js|css\/(?:product-menu|home-design)\.css)(?:\?[^"\s]*)?)"/g)) {
-    assert(match[1].endsWith('?v=20261029-brand2'), `${file} must request a new immutable asset URL: ${match[1]}`);
+    const version = match[1].includes('home-design.css') ? '?v=20261117-network1' : '?v=20261029-brand2';
+    assert(match[1].endsWith(version), `${file} must request a new immutable asset URL: ${match[1]}`);
     versionedReferences++;
   }
 }

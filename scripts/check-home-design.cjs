@@ -6,12 +6,12 @@ const root = path.join(__dirname, '..');
 const script = fs.readFileSync(path.join(root, 'assets/js/home-design.js'), 'utf8');
 
 async function render({ products = [], categories = [], categoryError = false } = {}) {
-  const grid = { innerHTML: '', setAttribute(key, value) { this[key] = value; } };
-  const categoryGrid = { innerHTML: '' };
+  const grid = { innerHTML: '', querySelectorAll: () => [], setAttribute(key, value) { this[key] = value; } };
+  const categoryGrid = { innerHTML: '', querySelectorAll: () => [] };
   const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   vm.runInNewContext(script, {
     document: { getElementById: id => ({ 'home-featured-grid': grid, 'home-category-grid': categoryGrid })[id] },
-    window: { catalogEscape: escape, catalogImage: value => value, productCard: item => `<article>${escape(item.title)}</article>`, loadProductsData: async () => products },
+    window: { setTimeout, clearTimeout, catalogEscape: escape, catalogImage: value => value, productCard: item => `<article>${escape(item.title)}</article>`, loadProductsData: async () => products },
     fetch: async () => ({ ok: !categoryError, json: async () => categories }),
   });
   await new Promise(resolve => setImmediate(resolve));
